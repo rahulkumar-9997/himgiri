@@ -15,4 +15,14 @@ class MapAttributesValueToCategory extends Model
         'attributes_value_id',
         'attributes_id'
     ];
+
+    public function attributeValue()
+    {
+        return $this->belongsTo(Attribute_values::class, 'attributes_value_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

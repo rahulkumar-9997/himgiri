@@ -62,45 +62,47 @@ class BannerController extends Controller
 
     public function store(Request $request){
         $validator = Validator::make($request->all(), [
-            'banner_title' => 'required|string|max:255',
+            'banner_title' => 'nullable|string|max:255',
             'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:6144',
             'banner_path' => 'required|url|max:255',
         ]);
-
+        
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors(),
             ], 422);
         }
+        
         $image = $request->file('banner_image');
-        $bannerTitle = Str::slug($request->input('banner_title'), '-'); 
+        $bannerTitle = $request->input('banner_title') ? Str::slug($request->input('banner_title'), '-') . '-himgiri' : 'default-banner-himgiri';
         $timestamp = round(microtime(true) * 1000);
-        $uniqueName = $bannerTitle . '-' . $timestamp . '.webp';
+        $uniqueName = $bannerTitle . '-' . $timestamp . '.webp';  
         $imagePath = public_path('images/banners');
-
         if (!file_exists($imagePath)) {
             mkdir($imagePath, 0755, true);
         }
+        
         $compressedImage = Image::make($image->getRealPath());
         $compressedImage->resize(1200, 600, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
-        $compressedImage->encode('webp', 80); 
+        $compressedImage->encode('webp', 80);
         $compressedImage->save($imagePath . '/' . $uniqueName);
         $banner = Banner::create([
             'title' => $request->input('banner_title'),
-            'image_path_desktop' => 'images/banners/' . $uniqueName,
+            'image_path_desktop' => $uniqueName,
             'link_desktop' => $request->input('banner_path'),
             'status' => true,
         ]);
-
+        
         return response()->json([
             'status' => 'success',
             'message' => 'Banner created successfully!',
             'data' => $banner,
         ]);
+        
     }
 
     public function edit(Request $request, $id){
@@ -192,7 +194,7 @@ class BannerController extends Controller
             $compressedImage->encode('webp', 80);
             $compressedImage->save($imagePath . '/' . $uniqueName);
 
-            $banner->image_path_desktop = 'images/banners/'.$uniqueName;
+            $banner->image_path_desktop = $uniqueName;
         }
         $banner->update([
             'title' => $request->input('banner_title'),

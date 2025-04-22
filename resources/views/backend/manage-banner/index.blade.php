@@ -49,7 +49,7 @@
                                     <td>{{ $sr_no }}</td>
                                     <td>{{ $banner_row->title }}</td>
                                     <td>
-                                        <img src="{{ asset($banner_row->image_path_desktop) }}" class="img-thumbnail" style="width: 70px; height: 70px;" alt="{{ $banner_row->title }}">
+                                        <img src="{{ asset('images/banners/' . $banner_row->image_path_desktop) }}" class="img-thumbnail" style="width: 150px; height: 70px;" alt="{{ $banner_row->title }}">
                                     </td>
                                     <td>
                                           <div class="d-flex gap-2">

@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Mail\ContactUsMail;
 use App\Models\WhatsappConversation;
+use App\Models\MapAttributesValueToCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Counter;
@@ -29,7 +30,17 @@ class FrontendController extends Controller
 {
     public function home()
     {
-        return view('frontend.index');
+        $data['banner'] = Banner::orderBy('id', 'desc')->get(['id', 'image_path_desktop', 'link_desktop', 'title']);
+        $seriesAttribute = Attribute::where('title', 'Series')->first();
+        $data['seriesValuesWithCategory'] = MapAttributesValueToCategory::where('attributes_id', $seriesAttribute->id)
+            ->with([
+                'attributeValue:id,name,slug,images',
+                'category:id,title,slug'
+            ])
+            ->get();
+        //return response()->json($data['seriesValuesWithCategory']);
+        DB::disconnect();
+        return view('frontend.index', compact('data'));
     }
 
     public function aboutUs()
@@ -37,21 +48,224 @@ class FrontendController extends Controller
         return view('frontend.pages.about-us');
     }
 
+    public function blog()
+    {
+        return view('frontend.pages.blog');
+    }
+
+    public function blogDetails()
+    {
+        return view('frontend.pages.blog-details');
+    }
+
     public function contactUs()
     {
         return view('frontend.pages.contact-us');
     }
 
-    public function collections()
+    public function collections(Request $request, $category_slug, $attributes_value_slug)
     {
-        return view('frontend.pages.collections');
+        $category = Category::select('id', 'title', 'slug')->where('slug', $category_slug)->first();
+        $attributeValue = Attribute_values::select('id', 'name', 'slug', 'attributes_id')->where('slug', $attributes_value_slug)->first();
+
+        $attributId = $attributeValue->attributes_id;
+        $attribute_top = Attribute::select('id', 'title')->where('id', $attributId)->first();
+
+        /*Base products query*/
+        $productsQuery = Product::select('products.id', 'products.title', 'products.slug', 'products.created_at')
+            ->where('category_id', $category->id)
+            ->where('product_status', 1);
+
+        // Apply the top attribute filter
+        $productsQuery->whereHas('attributes', function ($query) use ($attribute_top, $attributeValue) {
+            $query->where('attributes_id', $attribute_top->id)
+                ->whereHas('values', function ($q) use ($attributeValue) {
+                    $q->where('attributes_value_id', $attributeValue->id);
+                });
+        });
+        // Apply additional filters from the request
+        $filters = $request->query();
+        if (!empty($filters)) {
+            foreach ($filters as $filterAttributeSlug => $filterValueSlugs) {
+                if ($filterAttributeSlug !== $attribute_top->slug) {
+                    if (is_string($filterValueSlugs)) {
+                        $filterValueSlugs = explode(',', $filterValueSlugs);
+                    }
+                    $attribute = Attribute::where('slug', $filterAttributeSlug)->first();
+                    if (!$attribute) {
+                        Log::warning("Attribute not found for slug: {$filterAttributeSlug}");
+                        continue;
+                    }
+                    $valueIds = Attribute_values::whereIn('slug', $filterValueSlugs)->pluck('id')->toArray();
+                    $productsQuery->whereHas('attributes', function ($query) use ($attribute, $valueIds) {
+                        $query->where('attributes_id', $attribute->id)
+                            ->whereHas('values', function ($q) use ($valueIds) {
+                                $q->whereIn('attributes_value_id', $valueIds);
+                            });
+                    });
+                }
+            }
+        }
+        if ($request->has('sort')) {
+            $sortOption = $request->get('sort');
+            switch ($sortOption) {
+                case 'new-arrivals':
+                    $productsQuery->orderBy('created_at', 'desc');
+                    break;
+                case 'price-low-to-high':
+                    $productsQuery->orderByRaw('ISNULL(inventories.mrp), inventories.mrp ASC');
+                    break;
+                case 'price-high-to-low':
+                    $productsQuery->orderByRaw('ISNULL(inventories.mrp), inventories.mrp DESC');
+                    break;
+                case 'a-to-z-order':
+                    $productsQuery->orderBy('products.title', 'asc');
+                    break;
+                default:
+                    $productsQuery->orderBy('products.id', 'desc');
+                    break;
+            }
+        } else {
+            //$productsQuery->orderByRaw('ISNULL(inventories.mrp), inventories.mrp ASC');
+            $productsQuery->orderBy('created_at', 'desc');
+        }
+        /*Fetch attributes with values for the filter list (mapped attributes and counts)*/
+        $attributes_with_values_for_filter_list = $category->attributes()
+        ->with(['AttributesValues' => function ($query) use ($category, $attribute_top, $attributeValue) {
+            $query->whereHas('map_attributes_value_to_categories', function ($q) use ($category) {
+                $q->where('category_id', $category->id);
+            })
+                ->withCount(['productAttributesValues' => function ($q) use ($category, $attribute_top, $attributeValue) {
+                    // Calculate counts based on the filtered products query
+                    $q->whereHas('product', function ($q) use ($category, $attribute_top, $attributeValue) {
+                        $q->where('category_id', $category->id)
+                            ->whereHas('attributes', function ($query) use ($attribute_top, $attributeValue) {
+                                $query->where('attributes_id', $attribute_top->id)
+                                    ->whereHas('values', function ($q) use ($attributeValue) {
+                                        $q->where('attributes_value_id', $attributeValue->id);
+                                    });
+                            });
+                    });
+                }])
+                ->having('product_attributes_values_count', '>', 0)
+                ->orderBy('name');
+        }])
+        ->orderBy('title')
+        ->get();
+
+
+        $products = $productsQuery
+            ->with([
+                'category:id,title,slug',
+                'images' => function ($query) {
+                    $query->select('id', 'product_id', 'image_path')->orderBy('sort_order');
+                },
+                'ProductAttributesValues' => function ($query) {
+                    $query->select('id', 'product_id', 'product_attribute_id', 'attributes_value_id')
+                        ->with([
+                            'attributeValue:id,slug,name',
+                        ])
+                        ->orderBy('id');
+                },
+            ])
+            ->leftJoin('inventories', function ($join) {
+                $join->on('products.id', '=', 'inventories.product_id')
+                    ->whereRaw('inventories.mrp = (SELECT MIN(mrp) FROM inventories WHERE product_id = products.id)');
+            })
+            ->addSelect([
+                'inventories.mrp',
+                'inventories.offer_rate',
+                'inventories.purchase_rate',
+                'inventories.sku',
+            ])
+            ->paginate(4);
+        if ($request->ajax()) {
+            if ($request->has('load_more') && $request->get('load_more') == true) {
+                return response()->json([
+                    'products' => view('frontend.pages.partials.product-catalog-load-more', compact('products', 'attributes_with_values_for_filter_list'))->render(),
+                    'hasMore' => $products->hasMorePages(),
+                ]);
+            } else {
+                return response()->json([
+                    'products' => view('frontend.pages.ajax-product-catalog', compact('products', 'attributes_with_values_for_filter_list'))->render(),
+                    'hasMore' => $products->hasMorePages(),
+                ]);
+            }
+        }
+        DB::disconnect();
+        //return response()->json($products);
+        return view('frontend.pages.collections',
+        compact(
+            'products',
+            'attributeValue',
+            'category',
+            'attributes_with_values_for_filter_list',
+        ));
     }
 
-    public function products()
+    public function showProductDetails(Request $request, $slug, $attributes_value_slug)
     {
-        return view('frontend.pages.products');
+        $attributeValue = Attribute_values::where('slug', $attributes_value_slug)->first();
+        /*First get the product and increment visitor count in one query*/
+        $product = Product::where('slug', $slug)
+        ->firstOrFail()
+        ->increment('visitor_count');
+        /*First get the product and increment visitor count in one query*/
+       
+        if (!$attributeValue) {
+            $attributeValue = '';
+        }
+        $data['attributes_value_name'] = $attributeValue;
+        $data['product_details'] = Product::with([
+            'images' => function ($query) {
+                $query->orderBy('sort_order');
+            },
+            'category',
+            'brand',
+            'attributes.attribute',
+            'attributes.values.attributeValue',
+            'additionalFeatures.feature'
+        ])
+            ->leftJoin('inventories', function ($join) {
+                $join->on('products.id', '=', 'inventories.product_id')
+                    ->whereRaw('inventories.mrp = (SELECT MIN(mrp) FROM inventories WHERE product_id = products.id)');
+            })
+            ->select('products.*', 'inventories.mrp', 'inventories.offer_rate', 'inventories.purchase_rate', 'inventories.sku', 'inventories.stock_quantity')
+            ->where('products.slug', $slug)
+            ->firstOrFail();
+        
+        $categoryId = $data['product_details']->category->id;
+        
+        $data['related_products'] = Product::with([
+            'images' => function ($query) {
+                $query->orderBy('sort_order');
+            },
+            'category',
+            'ProductImagesFront:id,product_id,image_path',
+            'ProductAttributesValues' => function ($query) use ($attributeValue) {
+                $query->select('id', 'product_id', 'product_attribute_id', 'attributes_value_id')
+                    ->where('attributes_value_id', $attributeValue->id)
+                    ->with([
+                        'attributeValue:id,slug'
+                    ])
+                    ->orderBy('id');
+            }
+        ])
+            ->leftJoin('inventories', function ($join) {
+                $join->on('products.id', '=', 'inventories.product_id')
+                    ->whereRaw('inventories.mrp = (SELECT MIN(mrp) FROM inventories WHERE product_id = products.id)');
+            })
+            ->select('products.*', 'inventories.mrp', 'inventories.offer_rate', 'inventories.purchase_rate', 'inventories.sku')
+            ->where('products.category_id', $categoryId)
+            ->whereHas('productAttributesValues', function ($query) use ($attributeValue) {
+                $query->where('attributes_value_id', $attributeValue->id);
+            })
+            ->inRandomOrder()
+            ->limit(10)
+            ->get();
+			DB::disconnect();
+        /**Related product display */
+        //return response()->json($data['product_details']);
+        return view('frontend.pages.products', compact('data'));
     }
-
-   
-    
 }

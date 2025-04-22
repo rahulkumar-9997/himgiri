@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class AttributeController extends Controller
 {
@@ -461,6 +462,84 @@ class AttributeController extends Controller
             ]);
         } else {
             return response()->json(['error' => 'No data found'], 404);
+        }
+    }
+
+    public function showForm(Request $request){
+        $attributes_value_id = $request->input('attributes_value_id');
+        $attrValue = Attribute_values::find($attributes_value_id);
+        $image_pathe ='';
+        if($attrValue->images){
+            $imagePath = asset('images/attribute-values/' . $attrValue->images);
+            $image_pathe = '<img src="' . $imagePath . '" class="img-thumbnail" style="height: 120px;" alt="' . $attrValue->name . '">';
+        } 
+        $form ='
+        <div class="modal-body">
+            <form method="POST" action="'.route('attributes-value-upload-img.submit').'" accept-charset="UTF-8" enctype="multipart/form-data" id="attributesValueImageUpdate">
+                '.csrf_field().'
+                <input type="hidden" name="attributes_value_id" id="attributes_value_id" value="'.$attributes_value_id.'">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            '.$image_pathe.'
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image File *</label>
+                            <input type="file" id="image" name="image" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer pb-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        ';
+        return response()->json([
+            'message' => 'Form created successfully',
+            'form' => $form,
+        ]);
+    }
+
+    public function showFormSubmit(Request $request){
+        $request->validate([
+            'attributes_value_id' => 'required|exists:attributes_value,id',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+        DB::beginTransaction();    
+        try {
+            $attrValue = Attribute_values::find($request->attributes_value_id);
+            if ($attrValue->images) {
+                $oldImagePath = public_path('images/attribute-values/' . $attrValue->images);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+            $image = $request->file('image');
+            $webpImageName = 'himgiri-img-' . $attrValue->slug . '-' . uniqid() . '.webp';
+            $destinationPath = public_path('images/attribute-values/');
+            $img_original = Image::make($image->getRealPath());
+            $img_original->encode('webp', 75)->save($destinationPath . '/' . $webpImageName);
+            $attrValue->images = $webpImageName;
+            $attrValue->save();
+            DB::commit();
+            Cache::forget('attribute_value_' . $attrValue->id);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Image uploaded successfully.',
+            ]);
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error uploading images: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. Please try again later.',
+                'error_details' => $e->getMessage() 
+            ]);
         }
     }
 

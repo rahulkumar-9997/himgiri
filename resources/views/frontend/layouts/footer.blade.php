@@ -1,4 +1,8 @@
  <!-- Footer -->
+ <div id="loader" class="loader-wrapper" style="display: none;">
+   <span class="site-loader"> </span>
+   <h3 class="loader-content"> Loading . . . </h3>
+</div>
  <footer id="footer" class="footer-default xl-pb-70">
     <div class="footer-top">
        <div class="container">
@@ -56,7 +60,11 @@
                             </span>
                             <a target="_blank"
                                href="https://www.google.com/maps?q=123Yarranst,Punchbowl,NSW2196,Australia">
-                               123 Yarran st, Punchbowl, NSW 2196, Australia
+                               Siddhant Industries
+                               <br>
+                               C-4, Industrial Area,
+                               <br>
+                               Tajopur, Maunath Bhanjan - 275101 (U.P.)
                             </a>
                          </li>
                          <li class="item">
@@ -79,10 +87,10 @@
                                      fill="#0D0D0D" />
                                </svg>
                             </span>
-                            <a href="mailto:support@example.com">support@example.com</a>
+                            <a href="mailto:info@himgiricoolers.com"> info@himgiricooler.com</a>
                          </li>
                       </ul>
-                      <a href="https://www.google.com/maps?q=15Yarranst,Punchbowl,NSW,Australia"
+                      <a href="{{ route('contact-us') }}"
                          class="tf-btn btn-line-dark fw-normal">
                          <span class="text-sm text-transform-none">
                             Get direction
@@ -138,39 +146,38 @@
                    <div class="tf-collapse-content">
                       <ul class="footer-menu-list">
                          <li>
-                            <a href="about-us.html">About Us</a>
+                            <a href="{{ url('/') }}">Home</a>
                          </li>
                          <li>
-                            <a href="contact-us.html">Contact Us</a>
+                            <a href="{{route('about-us')}}">About Us</a>
                          </li>
                          <li>
-                            <a href="store-location.html">Our Store</a>
+                            <a href="{{route('contact-us')}}">Contact Us</a>
                          </li>
                          <li>
-                            <a href="about-us.html">Our Story</a>
+                            <a href="{{route('blog')}}">Blog</a>
                          </li>
+                        
                       </ul>
                    </div>
                 </div>
                 <div class="footer-col-block inner-col">
-                   <div class="footer-heading footer-heading-mobile text-xl fw-medium">Resource</div>
+                   <div class="footer-heading footer-heading-mobile text-xl fw-medium">Product</div>
                    <div class="tf-collapse-content">
                       <ul class="footer-menu-list">
                          <li>
-                            <a href="privacy-policy.html">Privacy Policies</a>
+                            <a href="">Coolers</a>
                          </li>
                          <li>
-                            <a href="term-and-condition.html">Terms & Conditions</a>
+                            <a href="term-and-condition.html">Almirah</a>
                          </li>
                          <li>
-                            <a href="return-and-refund.html">Returns & Refunds</a>
+                            <a href="">Privacy Policy</a>
                          </li>
                          <li>
-                            <a href="faq.html">FAQ’s</a>
+                            <a href="">Term & Conditions</a>
                          </li>
-                         <li>
-                            <a href="shipping.html">Shipping</a>
-                         </li>
+                         
                       </ul>
                    </div>
                 </div>

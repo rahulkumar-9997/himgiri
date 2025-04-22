@@ -32,6 +32,7 @@
                         <!-- {{ $product->title }} -->
                     </td>
                     <td>
+                        
                         @if($product->images->isNotEmpty())
                             <img src="{{ asset('images/product/thumb/' . $product->images[0]->image_path) }}" class="img-thumbnail" style="width: 70px; height: 70px;" alt="{{ $product->title }}">
                         @else

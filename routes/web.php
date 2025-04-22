@@ -76,8 +76,10 @@ Route::middleware([TrackVisitor::class])->group(function () {
     Route::get('/', [FrontendController::class, 'home'])->name('home');
     Route::get('about-us', [FrontendController::class, 'aboutUs'])->name('about-us');
     Route::get('contact-us', [FrontendController::class, 'contactUs'])->name('contact-us');
-    Route::get('collections', [FrontendController::class, 'collections'])->name('collections');
-    Route::get('products', [FrontendController::class, 'products'])->name('products');
+    Route::get('collections/{category_slug}/{attributes_value_slug}', [FrontendController::class, 'collections'])->name('collections');
+    Route::get('products/{product_slug}/{attributes_value_slug}', [FrontendController::class, 'showProductDetails'])->name('products');
+    Route::get('blog', [FrontendController::class, 'blog'])->name('blog');
+    Route::get('blog/{slug}', [FrontendController::class, 'blogDetails'])->name('blog.details');
     
 });
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
@@ -169,6 +171,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('attributes-option/{attributes}', [AttributeController::class, 'attributesOption'])->name('attributes-option');
     Route::post('merge-attributes-value', [AttributeController::class, 'mergeAttributesValue'])->name('merge-attributes-value');
     Route::post('merge-attributes-value/submit', [AttributeController::class, 'mergeAttributesValueFormSubmit'])->name('merge-attributes-value.submit');
+
+    Route::post('attributes-value-upload-img', [AttributeController::class, 'showForm'])->name('attributes-value-upload-img');
+    Route::post('attributes-value-upload-img/submit', [AttributeController::class, 'showFormSubmit'])->name('attributes-value-upload-img.submit');
 
     Route::post('/attributes-value', [AttributeController::class, 'attributesValueStore'])->name('attributes-value.store');
     Route::get('attributesvalue-list', [AttributeController::class, 'attributesValueList'])->name('attributesvalue-list');

@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attribute_values extends Model
 {
-    use HasFactory;
-    protected $table = 'attributes_value';
-    protected $fillable = [
-        'id',
-        'name',
-        'slug',
-        'attributes_id',
-        'sort_order',
-    ];
+        use HasFactory;
+        protected $table = 'attributes_value';
+        protected $fillable = [
+            'id',
+            'name',
+            'slug',
+            'attributes_id',
+            'sort_order',
+            'images',
+        ];
     
     public function product()
     {

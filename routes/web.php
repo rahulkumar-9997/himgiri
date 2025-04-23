@@ -76,11 +76,14 @@ Route::middleware([TrackVisitor::class])->group(function () {
     Route::get('/', [FrontendController::class, 'home'])->name('home');
     Route::get('about-us', [FrontendController::class, 'aboutUs'])->name('about-us');
     Route::get('contact-us', [FrontendController::class, 'contactUs'])->name('contact-us');
+    Route::post('contact-us', [FrontendController::class, 'contactUsStore'])->name('contact-us.store');
     Route::get('collections/{category_slug}/{attributes_value_slug}', [FrontendController::class, 'collections'])->name('collections');
     Route::get('products/{product_slug}/{attributes_value_slug}', [FrontendController::class, 'showProductDetails'])->name('products');
     Route::get('blog', [FrontendController::class, 'blog'])->name('blog');
     Route::get('blog/{slug}', [FrontendController::class, 'blogDetails'])->name('blog.details');
-    
+    Route::get('search-modal-open', [SearchController::class, 'searchModalOpen'])->name('search-modal-open');
+    Route::get('/search/suggestions', [SearchController::class, 'searchSuggestions'])->name('search.suggestions');
+    Route::get('search', [SearchController::class, 'searchListProduct'])->name('search');
 });
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::post('/update-counter', [FrontendController::class, 'updateCounter'])->name('update.counter');

@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('title','Himgiri Collection')
+@section('title','Himgiri : Contact us')
 @section('description', 'Best Kitchen Retail Store in Varanasi now goes Online')
 @section('keywords', 'Best Kitchen Retail Store in Varanasi now goes Online')
 @section('main-content')
@@ -85,8 +85,8 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-lg-between contact-area">
-            <div class="col-lg-6">
+        <div class="row contact-area">
+            <div class="col-lg-6 d-flex align-items-center">
                 <div class="map-section">
                     <div class="google-map-area w-100">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d133366.30176332663!2d82.9617778087673!3d25.294305536048245!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398e2d3ef62a58df%3A0x2b13c40c2d0470b0!2sSanskar%20Sarees!5e0!3m2!1sen!2sin!4v1622203244985!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
@@ -96,22 +96,29 @@
             <div class="col-lg-6">
                 <div class="con-form-section">
                     <div class="form-contact-wrap">
-                        <form action="#" class="form-default">
+                        <form  action="{{ route('contact-us.store') }}" accept="multipart/form-data" method="post" class="form-default" id="enquiryForm">
+                            @csrf
                             <div class="wrap">
                                 <div class="cols">
                                     <fieldset>
                                         <label for="username">Your name*</label>
-                                        <input id="username" class="radius-8" type="text" name="username" required="">
+                                        <input id="name" class="radius-8" type="text" name="name">
                                     </fieldset>
                                     <fieldset>
-                                        <label for="email">Your email*</label>
-                                        <input id="email" class="radius-8" type="email" name="email" required="">
+                                        <label for="email">Your phone no.*</label>
+                                        <input id="phone_number" class="radius-8" type="text" name="phone_number" maxlength="10">
+                                    </fieldset>
+                                </div>
+                                <div class="cols">
+                                    <fieldset>
+                                        <label for="email">Your email</label>
+                                        <input id="email" class="radius-8" type="email" name="email">
                                     </fieldset>
                                 </div>
                                 <div class="cols">
                                     <fieldset class="textarea">
-                                        <label for="mess">Message*</label>
-                                        <textarea id="mess" class="radius-8" required="" cols="60" rows="5"></textarea>
+                                        <label for="mess">Message</label>
+                                        <textarea id="mess" class="radius-8" cols="60" name="message" rows="3"></textarea>
                                     </fieldset>
                                 </div>
                                 <div class="button-submit">

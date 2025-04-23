@@ -11,6 +11,7 @@
 			@include('frontend.layouts.header-menu')
 			@yield('main-content')
 			@include('frontend.layouts.footer')
+			@include('frontend.layouts.search-bar')
 		</div>
 		@include('frontend.layouts.footerjs')
 		@stack('scripts')

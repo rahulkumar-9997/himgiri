@@ -30,6 +30,9 @@ class FrontendController extends Controller
 {
     public function home()
     {
+        // $previousUrl = url()->previous();
+        // Log::info('Previous URL: ' . $previousUrl);
+    
         $data['banner'] = Banner::orderBy('id', 'desc')->get(['id', 'image_path_desktop', 'link_desktop', 'title']);
         $seriesAttribute = Attribute::where('title', 'Series')->first();
         $data['seriesValuesWithCategory'] = MapAttributesValueToCategory::where('attributes_id', $seriesAttribute->id)
@@ -61,6 +64,42 @@ class FrontendController extends Controller
     public function contactUs()
     {
         return view('frontend.pages.contact-us');
+    }
+
+    public function contactUsStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'phone_number' => ['required', 'regex:/^[6-9]\d{9}$/'],
+            'email' => 'nullable|email',
+            'message' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+        try {
+            $data = [
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'mobile_number' => $request->input('phone_number'),
+                'message' => $request->input('message'),
+            ];
+            Mail::to('rahulkumarmaurya464@gmail.com')->send(new ContactUsMail($data));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Your enquiry has been sent successfully, Our team contact you shortly.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error mail error: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong, please try again later.' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function collections(Request $request, $category_slug, $attributes_value_slug)

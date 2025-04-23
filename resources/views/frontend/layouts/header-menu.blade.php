@@ -69,38 +69,38 @@
                                  }'>
                               <div class="swiper-wrapper">
                                  @foreach($randomProductsByCategory as $categorySlug => $products)
-                                 @foreach($products as $product)
-                                 @php
-                                 $imagePath = !empty($product['product_image']) && file_exists(public_path('images/product/thumb/' . $product['product_image']))
-                                 ? asset('images/product/thumb/' . $product['product_image'])
-                                 : asset('frontend/assets/himgiri-img/logo/1.png');
-                                 @endphp
+                                    @foreach($products as $product)
+                                       @php
+                                       $imagePath = !empty($product['product_image']) && file_exists(public_path('images/product/thumb/' . $product['product_image']))
+                                       ? asset('images/product/thumb/' . $product['product_image'])
+                                       : asset('frontend/assets/himgiri-img/logo/1.png');
+                                       @endphp
 
-                                 <div class="swiper-slide">
-                                    <div class="wg-cls style-abs asp-1 hover-img">
-                                       <a href="{{ route('products', [
-                                             'product_slug' => $product['product_slug'],
-                                             'attributes_value_slug' => $product['first_attribute_value_slug']
-                                          ]) }}" class="image img-style d-block">
-                                          <img src="{{ $imagePath }}" alt="{{ $product['product_name'] }}" class="lazyload" />
-                                       </a>
-                                       <div class="card-product-info text-center">
-                                          <a 
-                                          href="{{ route('products', [
-                                             'product_slug' => $product['product_slug'],
-                                             'attributes_value_slug' => $product['first_attribute_value_slug']
-                                          ]) }}"
-                                          class="name-product link fw-medium text-md">
-                                             {{ $product['product_name'] }}
-                                          </a>
-                                          <!--<p class="price-wrap fw-medium">
-                                             <span class="price-new text-primary">Rs. 100.00</span>
-                                             <span class="price-old">Rs. 130.00</span>
-                                          </p>-->
+                                       <div class="swiper-slide">
+                                          <div class="wg-cls style-abs asp-1 hover-img">
+                                             <a href="{{ route('products', [
+                                                   'product_slug' => $product['product_slug'],
+                                                   'attributes_value_slug' => $product['first_attribute_value_slug']
+                                                ]) }}" class="image img-style d-block">
+                                                <img src="{{ $imagePath }}" alt="{{ $product['product_name'] }}" class="lazyload" />
+                                             </a>
+                                             <div class="card-product-info text-center">
+                                                <a 
+                                                href="{{ route('products', [
+                                                   'product_slug' => $product['product_slug'],
+                                                   'attributes_value_slug' => $product['first_attribute_value_slug']
+                                                ]) }}"
+                                                class="name-product link fw-medium text-md">
+                                                   {{ $product['product_name'] }}
+                                                </a>
+                                                <!--<p class="price-wrap fw-medium">
+                                                   <span class="price-new text-primary">Rs. 100.00</span>
+                                                   <span class="price-old">Rs. 130.00</span>
+                                                </p>-->
+                                             </div>
+                                          </div>
                                        </div>
-                                    </div>
-                                 </div>
-                                 @endforeach
+                                    @endforeach
                                  @endforeach
                               </div>
 
@@ -130,25 +130,8 @@
          <div class="col-xl-2 col-md-4 col-3">
             <ul class="nav-icon d-flex justify-content-end align-items-center">
                <li class="nav-search">
-                  <a href="#search" data-bs-toggle="modal" class="nav-icon-item">
+                  <a href="javascript:void(0);" data-route="{{ route('search-modal-open') }}" data-bs-toggle="modal" class="nav-icon-item search-modal-open">
                      <i class="icon icon-search"></i>
-                  </a>
-               </li>
-               <li class="nav-account">
-                  <a href="#login" data-bs-toggle="offcanvas" aria-controls="login" class="nav-icon-item">
-                     <i class="icon icon-user"></i>
-                  </a>
-               </li>
-               <li class="nav-wishlist">
-                  <a href="wish-list.html" class="nav-icon-item">
-                     <i class="icon icon-heart"></i>
-                     <span class="count-box">0</span>
-                  </a>
-               </li>
-               <li class="nav-cart">
-                  <a href="#shoppingCart" data-bs-toggle="offcanvas" class="nav-icon-item">
-                     <i class="icon icon-cart"></i>
-                     <span class="count-box">0</span>
                   </a>
                </li>
             </ul>

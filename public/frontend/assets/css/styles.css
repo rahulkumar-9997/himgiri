@@ -2331,7 +2331,7 @@ a:focus, a:hover {
   justify-content: center;
 }
 .header-default .box-nav-menu .item-link {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 21px;
   font-weight: 500;
   display: flex;
@@ -2706,14 +2706,14 @@ a:focus, a:hover {
   overflow: auto;
 }
 .box-nav-menu .mega-menu .menu-heading {
-  font-size: 14px;
+  font-size: 18px;
   line-height: 22.4px;
   padding-bottom: 10px;
   margin-bottom: 15px;
-  border-bottom: 1px solid rgba(161, 161, 161, 0.2);
+  border-bottom: 2px solid #ffccc8;
   font-weight: 500;
   color: var(--dark);
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 .box-nav-menu .mega-menu.mega-tab {
   padding: 0;
@@ -15891,11 +15891,12 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
 
 .list-esd .item {
   display: grid;
-  gap: 10px;
-  padding: 20px 0px;
+  gap: 5px;
+  padding: 10px 0px;
 }
 .list-esd .item:not(:last-child) {
-  border-bottom: 1px solid var(--line);
+  /* border-bottom: 1px solid var(--line); */
+  border-bottom: 1px solid #dd2b1c;
 }
 
 .wrapper-wishlist .tf-wishlist-empty {
@@ -17444,8 +17445,8 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
     width: 100%;
   }
   .list-esd .item {
-    gap: 20px;
-    padding: 30px 0px;
+      gap: 5px;
+      padding: 10px 0px;
   }
   .tf-compare-item {
     gap: 20px;
@@ -17858,7 +17859,7 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
   }
   .tf-filter-dropdown,
   .tf-shop-control {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   .tf-filter-dropdown {
     gap: 20px;
@@ -20289,6 +20290,7 @@ rgba(11 28 57 / 41%);
   box-shadow: 5px 9px 10px 5px rgba(0, 0, 0, 0.2);
   margin-bottom: 30px;
   border-radius:10px;
+  width: 100%;
 }
 
 .google-map-area iframe {
@@ -20461,4 +20463,233 @@ rgba(11 28 57 / 41%);
 }
 .canvas-filter .text-xl{
   font-size: 18px;
+}
+.mega-shop .hover-img .img-style > img{
+  object-fit: contain;
+}
+.flat-spacing-3.about-us-top{
+    padding-top: 10px;
+}
+.flat-spacing-3.about-us-bottom{
+    padding-top: 10px;
+    padding-bottom: 80px;
+}
+.about-us-ul li h6{
+  font-size: 20px;
+  line-height: 30px;
+}
+.about-us-top .about-ush1{
+    font-size: 34px;
+    line-height: 40px;
+    color: #dd2b1c;
+    font-weight: 500;
+}
+.about-us-bottom .about-us-h2{
+    font-size: 34px;
+    line-height: 40px;
+    color: #dd2b1c;
+    font-weight: 500;
+}
+.contact_iconbox:hover .icon{
+    transform: scale(1.1);
+}
+.contact_iconbox:hover .iconbox_icon {
+  transform: rotate(10deg);
+}
+.search-form_vall{
+  position: relative;
+}
+.suggestions-list {
+  /* position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: #fff;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 99; */
+  border-radius: 0 0 8px 8px;
+  position: absolute;
+  background-color: #fff;
+  color: #000;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  display: none;
+  /* box-shadow: 0 1px 4px rgba(0, 0, 0, .12); */
+  box-shadow: 0 0 5px 2px #c4c1c1;
+  /* max-height: 200px;
+  overflow-y: auto; */
+  overflow: hidden;
+  white-space: nowrap;
+
+}
+
+.suggestions-list li {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.suggestions-list li:hover {
+  background-color: #f1f1f1;
+  color: #000000;
+}
+
+.suggestions-list li.selected {
+  background-color: #e4e4e4;
+  color: #000000;
+}
+/*search suggstion css*/
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+background-color: #f0f0f0;
+  color: #fff;
+}
+
+.suggestion-image {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.suggestion-title {
+  font-size: 14px;
+  color: #222;
+}
+.suggestion-item i, .suggestion-item img{
+padding-right: 10px;
+}
+.suggestions-list .highlight {
+color: #000000;
+font-weight: bold;
+}
+
+
+.suggestion-img{
+  width: 26px;
+  height: 23px;
+  margin-right: 5px;
+  position: relative;
+}
+.suggestion-img img{
+width: auto;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  max-height: 100%;
+}
+.search-modal .search-body {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  position: absolute;
+  top: 250px
+}
+
+@media (min-width: 1024px) {
+  .search-modal .search-body {
+      max-width:60%;
+      min-width: 60%;
+      right: -30%;
+      top: 0;
+      height: 100%;
+  }
+}
+
+.search-modal .search-body.start-animation {
+  -webkit-transform: translate(0, -250px) scale(1);
+  transform: translate(0, -250px) scale(1);
+  -webkit-transition: -webkit-transform 0.5s;
+  transition: -webkit-transform 0.5s;
+  transition: transform 0.5s;
+  transition: transform 0.5s, -webkit-transform 0.5s
+}
+
+@media (min-width: 1024px) {
+  .search-modal .search-body.start-animation {
+      -webkit-transform:translate(-50%, 0) scale(1);
+      transform: translate(-50%, 0) scale(1);
+      -webkit-transition: -webkit-transform 0.5s;
+      transition: -webkit-transform 0.5s;
+      transition: transform 0.5s;
+      transition: transform 0.5s, -webkit-transform 0.5s
+  }
+}
+
+.search-modal .search-body .modal-content {
+  position: relative;
+  height: 100%
+}
+
+@media (min-width: 1024px) {
+  .search-modal .search-body .modal-content {
+      height:auto
+  }
+}
+
+.search-modal .search-body .modal-content .close-search-pop-up {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  right: 25px;
+  top: 16px;
+  border: 1px solid #000;
+  border-radius: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center
+}
+
+@media (min-width: 1024px) {
+  .search-modal .search-body .modal-content .close-search-pop-up {
+      top:20px
+  }
+}
+
+.search-modal .search-body .modal-content .close-search-pop-up .i-close {
+  font-size: 10px;
+  line-height: 12px
+}
+
+.search-modal .search-body .modal-content .modal-body {
+  background: white
+}
+
+@media (min-width: 1024px) {
+  .search-modal .search-body .modal-content .modal-body {
+      min-height:1100px
+  }
+}
+h1.titleh1{
+  font-size: 24px;
+  line-height: 26px;
+}
+h1.titleh1 span{
+  color: var(--dark);
 }

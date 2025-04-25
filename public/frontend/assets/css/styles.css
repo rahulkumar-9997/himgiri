@@ -20027,10 +20027,8 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
   height: 100%;
   left: 0;
   top: 0;
-  background:
-rgba(11, 28, 57, .7);
-  background:
-rgba(11 28 57 / 41%);
+  /* background:rgba(11, 28, 57, .7); */
+  background:rgb(11 28 57 / 0%);
   z-index: 1;
 }
 .home-slider .box-content{
@@ -20692,4 +20690,11 @@ h1.titleh1{
 }
 h1.titleh1 span{
   color: var(--dark);
+}
+.home-almirah .card-product .name-product{
+  text-align: center;
+  font-size: 22px;
+}
+.home-slider .slider-wrap a{
+  width: 100%;
 }

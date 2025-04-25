@@ -30,18 +30,33 @@ class FrontendController extends Controller
 {
     public function home()
     {
-        // $previousUrl = url()->previous();
-        // Log::info('Previous URL: ' . $previousUrl);
-    
-        $data['banner'] = Banner::orderBy('id', 'desc')->get(['id', 'image_path_desktop', 'link_desktop', 'title']);
-        $seriesAttribute = Attribute::where('title', 'Series')->first();
-        $data['seriesValuesWithCategory'] = MapAttributesValueToCategory::where('attributes_id', $seriesAttribute->id)
+        $data['banner'] = Banner::latest('id')->get(['id', 'image_path_desktop', 'link_desktop', 'title']);
+
+        [$seriesAttribute, $modelAttribute, $airCoolerCategory, $almirahCategory] = [
+            Attribute::where('title', 'Series')->first(),
+            Attribute::where('title', 'Model')->first(),
+            Category::where('title', 'Air Coolers')->first(),
+            Category::where('title', 'Almirah')->first()
+        ];
+
+        $data['seriesValuesWithCategory'] = MapAttributesValueToCategory::query()
+            ->where('attributes_id', $seriesAttribute->id)
+            ->where('category_id', $airCoolerCategory->id)
             ->with([
                 'attributeValue:id,name,slug,images',
                 'category:id,title,slug'
             ])
             ->get();
-        //return response()->json($data['seriesValuesWithCategory']);
+
+        $data['modelValuesWithCategory'] = MapAttributesValueToCategory::query()
+            ->where('attributes_id', $modelAttribute->id)
+            ->where('category_id', $almirahCategory->id)
+            ->with([
+                'attributeValue:id,name,slug,images',
+                'category:id,title,slug'
+            ])
+            ->get();
+        //return response()->json($data['modelValuesWithCategory']);
         DB::disconnect();
         return view('frontend.index', compact('data'));
     }
@@ -307,4 +322,5 @@ class FrontendController extends Controller
         //return response()->json($data['product_details']);
         return view('frontend.pages.products', compact('data'));
     }
+    
 }

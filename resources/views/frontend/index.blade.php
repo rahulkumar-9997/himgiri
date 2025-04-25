@@ -6,7 +6,7 @@
 @if (!empty($data['banner']) && $data['banner']->isNotEmpty())
 <section class="tf-slideshow slider-default home-slider">
     <div class="swiper tf-sw-slideshow slider-effect-fade" data-preview="1" data-tablet="1" data-mobile="1"
-        data-centered="false" data-space="0" data-space-mb="0" data-loop="true" data-auto-play="false"
+        data-centered="false" data-space="0" data-space-mb="0" data-loop="true" data-auto-play="true"
         data-effect="fade">
         <div class="swiper-wrapper">
             @foreach ($data['banner'] as $banner)
@@ -218,142 +218,112 @@
         </div>
 </section>
 
-<!-- Today’s Picks -->
-<section class="flat-spacing-3 pb-0 overflow-hidden home-almirah">
-    <div class="container">
-        <div class="flat-title wow fadeInUp">
-            <h4 class="title with-border">Today’s Picks</h4>
-        </div>
-        <div class="fl-control-sw2 wrap-pos-nav sw-over-product wow fadeInUp">
-            <div dir="ltr" class="swiper tf-swiper wrap-sw-over" data-swiper='{
-                    "slidesPerView": 2,
-                    "spaceBetween": 12,
-                    "speed": 800,
-                    "observer": true,
-                    "observeParents": true,
-                    "slidesPerGroup": 2,
-                    "navigation": {
-                        "clickable": true,
-                        "nextEl": ".nav-next-top-pick",
-                        "prevEl": ".nav-prev-top-pick"
-                    },
-                    "pagination": { "el": ".sw-pagination-top-pick", "clickable": true },
-                    "breakpoints": {
-                    "768": { "slidesPerView": 3, "spaceBetween": 12, "slidesPerGroup": 3 },
-                    "1200": { "slidesPerView": 5, "spaceBetween": 20, "slidesPerGroup": 5}
-                    }
-                }'>
-                @php
-                $images = [
-                '1.png',
-                '2.png',
-                '3.png',
-                '4.png',
-                '5.png',
-                '6.png',
-                '7.png',
-                '8.png',
-                '9.png',
-                '10.png',
-                ];
-                $bgColors = ['#f5f5f5', '#fff3d9', '#f4e7fb', '#f4dcdc'];
-                @endphp
-                <div class="swiper-wrapper">
-                    @foreach ($images as $index => $img)
-                    <!-- item 1 -->
-                    <div class="swiper-slide">
-                        <div class="card-product card-product-size">
-                            <div class="card-product-wrapper" style="background-color: {{ $bgColors[$index % count($bgColors)] }}; padding:10px;">
-                                <a href="product-detail.html" class="product-img">
-                                    <img class="img-product lazyload"
-                                        data-src="{{asset('frontend/assets/himgiri-img/almirah/' . $img)}}"
-                                        src="{{asset('frontend/assets/himgiri-img/almirah/' . $img)}}" alt="image-product">
-                                    <img class="img-hover lazyload"
-                                        data-src="{{asset('frontend/assets/himgiri-img/almirah/10.png')}}"
-                                        src="{{asset('frontend/assets/himgiri-img/almirah/10.png')}}" alt="image-product">
-                                </a>
-                                <div class="on-sale-wrap"><span class="on-sale-item">20% Off</span></div>
-                                <ul class="list-product-btn">
-                                    <li>
-                                        <a href="#shoppingCart" data-bs-toggle="offcanvas"
-                                            class="hover-tooltip tooltip-left box-icon">
-                                            <span class="icon icon-cart2"></span>
-                                            <span class="tooltip">Add to Cart</span>
-                                        </a>
-                                    </li>
-                                    <li class="wishlist">
-                                        <a href="javascript:void(0);"
-                                            class="hover-tooltip tooltip-left box-icon">
-                                            <span class="icon icon-heart2"></span>
-                                            <span class="tooltip">Add to Wishlist</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#quickView" data-bs-toggle="modal"
-                                            class="hover-tooltip tooltip-left box-icon quickview">
-                                            <span class="icon icon-view"></span>
-                                            <span class="tooltip">Quick View</span>
-                                        </a>
-                                    </li>
-                                    <li class="compare">
-                                        <a href="#compare" data-bs-toggle="modal"
-                                            class="hover-tooltip tooltip-left box-icon">
-                                            <span class="icon icon-compare"></span>
-                                            <span class="tooltip">Add to Compare</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                                <!-- <ul class="size-box">
-                                        <li class="size-item text-xs text-white">XS</li>
-                                        <li class="size-item text-xs text-white">S</li>
-                                        <li class="size-item text-xs text-white">M</li>
-                                        <li class="size-item text-xs text-white">L</li>
-                                        <li class="size-item text-xs text-white">XL</li>
-                                        <li class="size-item text-xs text-white">2XL</li>
-                                    </ul> -->
-                            </div>
-                            <div class="card-product-info">
-                                <a href="product-detail.html" class="name-product link fw-medium text-md">Wardrobe with 3 doors, white, 117x190 cm (46x74 3/4 ")</a>
-                                <p class="price-wrap fw-medium">
-                                    <span class="price-new text-primary">Rs. 100.00</span>
-                                    <span class="price-old">Rs. 130.00</span>
-                                </p>
-                                <!-- <ul class="list-color-product">
-                                        <li
-                                            class="list-color-item color-swatch hover-tooltip tooltip-bot line active">
-                                            <span class="tooltip color-filter">White</span>
-                                            <span class="swatch-value bg-white"></span>
-                                            <img class=" lazyload" data-src="images/products/fashion/product-29.jpg"
-                                                src="images/products/fashion/product-29.jpg" alt="image-product">
-                                        </li>
-                                        <li class="list-color-item color-swatch hover-tooltip tooltip-bot">
-                                            <span class="tooltip color-filter">Grey</span>
-                                            <span class="swatch-value bg-grey-4"></span>
-                                            <img class=" lazyload" data-src="images/products/fashion/product-6.jpg"
-                                                src="images/products/fashion/product-6.jpg" alt="image-product">
-                                        </li>
-                                        <li class="list-color-item color-swatch hover-tooltip tooltip-bot">
-                                            <span class="tooltip color-filter">Black</span>
-                                            <span class="swatch-value bg-dark"></span>
-                                            <img class=" lazyload" data-src="images/products/fashion/product-20.jpg"
-                                                src="images/products/fashion/product-20.jpg" alt="image-product">
-                                        </li>
-                                    </ul> -->
+@if (!empty($data['modelValuesWithCategory']) && $data['modelValuesWithCategory']->isNotEmpty())
+    <section class="flat-spacing-3 pb-0 overflow-hidden home-almirah">
+        <div class="container">
+            <div class="flat-title wow fadeInUp">
+                <h4 class="title with-border">Today’s Picks</h4>
+            </div>
+            <div class="fl-control-sw2 wrap-pos-nav sw-over-product wow fadeInUp">
+                <div dir="ltr" class="swiper tf-swiper wrap-sw-over" data-swiper='{
+                        "slidesPerView": 2,
+                        "spaceBetween": 12,
+                        "speed": 800,
+                        "observer": true,
+                        "observeParents": true,
+                        "slidesPerGroup": 2,
+                        "navigation": {
+                            "clickable": true,
+                            "nextEl": ".nav-next-top-pick",
+                            "prevEl": ".nav-prev-top-pick"
+                        },
+                        "pagination": { "el": ".sw-pagination-top-pick", "clickable": true },
+                        "breakpoints": {
+                        "768": { "slidesPerView": 3, "spaceBetween": 12, "slidesPerGroup": 3 },
+                        "1200": { "slidesPerView": 5, "spaceBetween": 20, "slidesPerGroup": 5}
+                        }
+                    }'>
+                    @php
+                    
+                    $bgColors = ['#f5f5f5', '#fff3d9', '#f4e7fb', '#f4dcdc'];
+                    @endphp
+                    <div class="swiper-wrapper">
+                    @foreach($data['modelValuesWithCategory'] as  $index =>$item)
+                        @php
+                            $series = $item->attributeValue;
+                            $category_slug = $item->category->slug ?? '';
+                            $attributes_value_slug = $item->attributeValue->slug ?? '';
+                            $title = $series->name ?? '';
+                            $imageName = $item->attributeValue->images;
+                            $imagePath = public_path('images/attribute-values/' . $imageName);
+                            $imageUrl = file_exists($imagePath) && !empty($imageName)
+                            ? asset('images/attribute-values/' . $imageName)
+                            : asset('frontend/assets/himgiri-img/logo/1.png');
+                        @endphp
+                        <!-- item 1 -->
+                        <div class="swiper-slide">
+                            <div class="card-product card-product-size">
+                                <div class="card-product-wrapper" style="background-color: {{ $bgColors[$index % count($bgColors)] }}; padding:10px;">
+                                    <a href="{{ route('collections', [
+                                            'category_slug' => $category_slug,
+                                            'attributes_value_slug' => $attributes_value_slug
+                                        ]) }}" class="product-img">
+                                        <img class="img-product lazyload"
+                                            data-src="{{ $imageUrl }}"
+                                            src="{{ $imageUrl }}" alt="{{ $title }}">
+                                        <img class="img-hover lazyload"
+                                            data-src="{{ $imageUrl }}"
+                                            src="{{ $imageUrl }}" alt="{{ $title }}">
+                                    </a>
+                                    <!-- <div class="on-sale-wrap"><span class="on-sale-item">20% Off</span></div> -->
+                                </div>
+                                <div class="card-product-info">
+                                    <a href="{{ route('collections', [
+                                            'category_slug' => $category_slug,
+                                            'attributes_value_slug' => $attributes_value_slug
+                                        ]) }}" class="name-product link fw-medium text-md">
+                                        {{ $title }}
+                                    </a>
+                                    <!-- <p class="price-wrap fw-medium">
+                                        <span class="price-new text-primary">Rs. 100.00</span>
+                                        <span class="price-old">Rs. 130.00</span>
+                                    </p> -->
+                                    <!-- <ul class="list-color-product">
+                                            <li
+                                                class="list-color-item color-swatch hover-tooltip tooltip-bot line active">
+                                                <span class="tooltip color-filter">White</span>
+                                                <span class="swatch-value bg-white"></span>
+                                                <img class=" lazyload" data-src="images/products/fashion/product-29.jpg"
+                                                    src="images/products/fashion/product-29.jpg" alt="image-product">
+                                            </li>
+                                            <li class="list-color-item color-swatch hover-tooltip tooltip-bot">
+                                                <span class="tooltip color-filter">Grey</span>
+                                                <span class="swatch-value bg-grey-4"></span>
+                                                <img class=" lazyload" data-src="images/products/fashion/product-6.jpg"
+                                                    src="images/products/fashion/product-6.jpg" alt="image-product">
+                                            </li>
+                                            <li class="list-color-item color-swatch hover-tooltip tooltip-bot">
+                                                <span class="tooltip color-filter">Black</span>
+                                                <span class="swatch-value bg-dark"></span>
+                                                <img class=" lazyload" data-src="images/products/fashion/product-20.jpg"
+                                                    src="images/products/fashion/product-20.jpg" alt="image-product">
+                                            </li>
+                                        </ul> -->
+                                </div>
                             </div>
                         </div>
+                        @endforeach
                     </div>
-                    @endforeach
+                    <div
+                        class="d-flex d-xxl-none mt_5 sw-dot-default sw-pagination-top-pick justify-content-center">
+                    </div>
                 </div>
-                <div
-                    class="d-flex d-xxl-none mt_5 sw-dot-default sw-pagination-top-pick justify-content-center">
-                </div>
+                <div class="d-none d-xxl-flex swiper-button-next nav-swiper nav-next-top-pick"></div>
+                <div class="d-none d-xxl-flex swiper-button-prev nav-swiper nav-prev-top-pick"></div>
             </div>
-            <div class="d-none d-xxl-flex swiper-button-next nav-swiper nav-next-top-pick"></div>
-            <div class="d-none d-xxl-flex swiper-button-prev nav-swiper nav-prev-top-pick"></div>
         </div>
-    </div>
-</section>
-<!-- /Today’s Picks -->
+    </section>
+@endif
 <!-- Icon box -->
 <div class="flat-spacing-18 footer-icon">
     <div class="container">

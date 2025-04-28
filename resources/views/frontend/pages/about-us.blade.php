@@ -8,7 +8,7 @@
     <div class="container">
         <ul class="breadcrumb-list">
             <li class="item-breadcrumb">
-                <a href="" class="text">Home</a>
+                <a href="{{ url('/') }}" class="text">Home</a>
             </li>
 
             <li class="item-breadcrumb dot">
@@ -33,8 +33,8 @@
                 </p>
             </div>
             <div class="box-text">
-                <p class="text-md">
-                    At <span class="fw-medium">Himgiri</span>, we make strong almirahs and powerful air coolers that are easy to<br> use and built to last. Our products are made for homes and shops that need comfort,<br> safety, and simple design.
+                <p class="text-md text-main">
+                    At <span class="fw-medium">Himgiri</span>, we make strong almirahs and powerful air coolers that are easy to<br> use and built to last. Our products are made for homes and  shops that <br>need comfort, safety, and simple design.
 
                 </p>
             </div>
@@ -43,16 +43,27 @@
 </section>
 <section class="flat-spacing-3 about-us-bottom">
     <div class="container">
-        <div class="flat-title-2 text-center">
-            <h2 class="about-us-h2">
-                Why Choose Himgiri ?
-            </h2>
-            <p class="text-md text-main">
-                Our air coolers and almirahs are made with smart design and everyday needs in mind. We mix strong build with modern <br> style to give you products that are useful, comfortable, and easy to rely on.
-            </p>
+        <div class="about-page-img">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="flat-title-2">
+                        <h2 class="about-us-h2">
+                            Why Choose Himgiri ?
+                        </h2>
+                        <p class="text-md text-main">
+                            Our air coolers and almirahs are made with smart design and everyday needs in mind. We mix strong build with modern style to give you products that are useful, comfortable, and easy to rely on.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="image radius-16 overflow-hidden w-100 h-100">
+                        <img src="{{ asset('frontend/assets/himgiri-img/about-us-page.jpg') }}" data-src="{{ asset('frontend/assets/himgiri-img/about-us-page.jpg') }}" alt="about" class="w-100 h-100 object-fit-cover ls-is-cached lazyloaded">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
-            <div class="col-xl-7 col-md-6">
+            <div class="col-xl-6 col-md-6">
                 <ul class="list-esd d-md-flex flex-md-column justify-content-md-center h-100 about-us-ul">
                     <li class="item">
                         <h6>
@@ -78,15 +89,12 @@
                             Our coolers bring fresh air to your space, while our almirahs help you stay organised. Himgiri gives you products that are easy to use and fit perfectly into your home or shop.
                         </p>
                     </li>
-                    <li class="item">
-                        <h6>
-                            Comfort Designed Just for You
-                        </h6>
-                        <p class="text-md text-main">
-                         Our coolers and almirahs are made to suit your daily needs. With simple style and smart features, Himgiri brings ease and comfort to every space.
-
-                        </p>
-                    </li>
+                    
+                </ul>
+            </div>
+            <div class="col-xl-6 col-md-6">
+                <ul class="list-esd d-md-flex flex-md-column justify-content-md-center h-100 about-us-ul">
+                    
                     <li class="item">
                         <h6>
                             Strong Build, Neat Finish
@@ -113,11 +121,6 @@
                         </p>
                     </li>
                 </ul>
-            </div>
-            <div class="col-xl-5 col-md-6">
-                <div class="image radius-16 overflow-hidden w-100 h-100">
-                    <img src="{{ asset('frontend/assets/himgiri-img/about-us-page.jpg') }}" data-src="{{ asset('frontend/assets/himgiri-img/about-us-page.jpg') }}" alt="about" class="w-100 h-100 object-fit-cover ls-is-cached lazyloaded">
-                </div>
             </div>
         </div>
     </div>

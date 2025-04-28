@@ -12,9 +12,17 @@ class AppServiceProvider extends ServiceProvider
 {
     
     public function boot()
-    {        
-        View::composer('frontend.layouts.header-menu', MenuComposer::class);
+    {
+           
+        if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipod|mobile)/i', strtolower($_SERVER['HTTP_USER_AGENT']))) {
+            $views[] = 'frontend.layouts.mobile-menu';
+        }else{
+            $views = ['frontend.layouts.header-menu'];
+        }
+    
+        View::composer($views, MenuComposer::class);
     }
+    
 
     
 }

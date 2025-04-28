@@ -232,7 +232,7 @@ class FrontendController extends Controller
                 'inventories.purchase_rate',
                 'inventories.sku',
             ])
-            ->paginate(4);
+            ->paginate(20);
         if ($request->ajax()) {
             if ($request->has('load_more') && $request->get('load_more') == true) {
                 return response()->json([
@@ -255,6 +255,120 @@ class FrontendController extends Controller
             'category',
             'attributes_with_values_for_filter_list',
         ));
+    }
+
+    public function showCategoryProduct(Request $request, $categorySlug)
+    {
+        try {
+            //$primary_category = PrimaryCategory::where('link', $request->url())->first();
+            Log::info('Filters: ' . json_encode($request->query()));
+            $category = Category::where('slug', $categorySlug)->first();
+            $productsQuery = Product::where('category_id', $category->id)->where('product_status', 1);
+
+            /** for filter code */
+            $filters = $request->query();
+            if (!empty($filters)) {
+                foreach ($filters as $attributeSlug => $valueSlugs) {
+                    if (is_string($valueSlugs)) {
+                        $valueSlugs = explode(',', $valueSlugs);
+                    }
+                    $attribute = Attribute::where('slug', $attributeSlug)->first();
+                    if (!$attribute) {
+                        Log::warning("Attribute not found for slug: {$attributeSlug}");
+                        continue;
+                    }
+                    $valueIds = Attribute_values::whereIn('slug', $valueSlugs)->pluck('id')->toArray();
+                    $productsQuery->whereHas('attributes', function ($query) use ($attribute, $valueIds) {
+                        $query->where('attributes_id', $attribute->id)
+                            ->whereHas('values', function ($q) use ($valueIds) {
+                                $q->whereIn('attributes_value_id', $valueIds);
+                            });
+                    });
+                }
+            }
+
+            $attributes_with_values_for_filter_list = $category->attributes()
+                ->with(['AttributesValues' => function ($query) use ($category) {
+                    $query->whereHas('map_attributes_value_to_categories', function ($q) use ($category) {
+                        $q->where('category_id', $category->id);
+                    })
+                        ->withCount(['productAttributesValues' => function ($q) use ($category) {
+                            $q->whereHas('product', function ($q) use ($category) {
+                                $q->where('category_id', $category->id);
+                            });
+                        }])
+                        //->having('product_attributes_values_count', '>', 0)
+                        ->orderBy('name');
+                }])
+                ->orderBy('title')
+                ->get();
+            // Sorting logic
+            if ($request->has('sort')) {
+                $sortOption = $request->get('sort');
+                switch ($sortOption) {
+                    case 'new-arrivals':
+                        $productsQuery->orderBy('created_at', 'desc');
+                        break;
+                    case 'price-low-to-high':
+                        $productsQuery->orderByRaw('ISNULL(inventories.mrp), inventories.mrp ASC');
+                        break;
+                    case 'price-high-to-low':
+                        $productsQuery->orderByRaw('ISNULL(inventories.mrp), inventories.mrp DESC');
+                        break;
+                    case 'a-to-z-order':
+                        $productsQuery->orderBy('products.title', 'asc');
+                        break;
+                    default:
+                        $productsQuery->orderBy('products.id', 'desc');
+                        break;
+                }
+            } else {
+                //$productsQuery->orderByRaw('ISNULL(inventories.mrp), inventories.mrp ASC');
+                $productsQuery->orderBy('created_at', 'desc');
+            }
+
+            // Fetching products with the necessary relationships
+            $products = $productsQuery->with([
+                'category',
+                'images' => function($query) {
+                    $query->select('id', 'product_id', 'image_path')
+                        ->orderBy('sort_order');
+                },
+                'ProductAttributesValues' => function ($query) {
+                    $query->select('id', 'product_id', 'product_attribute_id', 'attributes_value_id')
+                        ->with([
+                            'attributeValue:id,slug'
+                        ])
+                        ->orderBy('id');
+                }
+            ])
+                ->leftJoin('inventories', function ($join) {
+                    $join->on('products.id', '=', 'inventories.product_id')
+                        ->whereRaw('inventories.mrp = (SELECT MIN(mrp) FROM inventories WHERE product_id = products.id)');
+                })
+                ->select('products.*', 'inventories.mrp', 'inventories.offer_rate', 'inventories.purchase_rate', 'inventories.sku')
+                ->paginate(32);
+            //dd($specialOffers);
+            if ($request->ajax()) {
+                if ($request->has('load_more') && $request->get('load_more') == true) {
+                    return response()->json([
+                        'products' => view('frontend.pages.partials.product-category-catalog-load-more', compact('products', 'attributes_with_values_for_filter_list'))->render(),
+                        'hasMore' => $products->hasMorePages(),
+                    ]);
+                } else {
+                    return response()->json([
+                        'products' => view('frontend.pages.ajax-product-category-catalog', compact('products', 'attributes_with_values_for_filter_list'))->render(),
+                        'hasMore' => $products->hasMorePages(),
+                    ]);
+                }
+            }
+			DB::disconnect();
+            return view('frontend.pages.product-catalog-category', compact('products', 'category', 'attributes_with_values_for_filter_list'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching product catalog: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json(['error' => 'Something went wrong.'], 500);
+        }
     }
 
     public function showProductDetails(Request $request, $slug, $attributes_value_slug)
@@ -319,7 +433,7 @@ class FrontendController extends Controller
             ->get();
 			DB::disconnect();
         /**Related product display */
-        //return response()->json($data['product_details']);
+        //return response()->json($data['related_products']);
         return view('frontend.pages.products', compact('data'));
     }
     

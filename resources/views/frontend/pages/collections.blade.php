@@ -23,6 +23,15 @@
 <!-- Section Product -->
 <section class="flat-spacing-2 pt-0 collections-page">
     <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="h1-heading">
+                    <h1>
+                        {{ $attributeValue->name }} {{ $category->title }} 
+                    </h1>
+                </div>
+            </div>
+        </div>
         <div class="row" id="product-catalog-frontend">
             @include('frontend.pages.ajax-product-catalog', [$products, $attributes_with_values_for_filter_list])
         </div>

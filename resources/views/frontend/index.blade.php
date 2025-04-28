@@ -59,22 +59,16 @@
 
 @if (!empty($data['seriesValuesWithCategory']) && $data['seriesValuesWithCategory']->isNotEmpty())
 <section class="flat-spacing-3 home-category-section">
-    <!-- <img src="{{ asset('frontend/assets/himgiri-img/leaf-top.png') }}"
-            class="decor-img decor-top-right wow leaf-float"
-            alt="Decoration Top Right" />
-
-        <img src="{{ asset('frontend/assets/himgiri-img/leaf-bottom.png') }}"
-            class="decor-img decor-bottom-left wow leaf-float  "
-            alt="Decoration Bottom Left" /> -->
-
     <div class="container">
-        <div class="flat-animate-tab">
-            <div class="flat-title-tab-categories wow fadeInUp text-center">
-                <h4 class="title with-border">Coolers</h4>
-            </div>
-            <div class="tab-content">
-                <div class="tab-pane active show" id="women" role="tabpanel">
-                    <div dir="ltr" class="xl-px-26 swiper tf-swiper" data-swiper='{
+        <div class="row justify-content-md-center">
+            <div class="col-lg-10">
+                <div class="flat-animate-tab">
+                    <div class="flat-title-tab-categories wow fadeInUp text-center">
+                        <h4 class="title with-border">Coolers</h4>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active show" id="women" role="tabpanel">
+                            <div dir="ltr" class="xl-px-26 swiper tf-swiper" data-swiper='{
                                 "slidesPerView": 2,
                                 "spaceBetween": 12,
                                 "speed": 800,
@@ -90,49 +84,49 @@
                                 "breakpoints": {
                                 "575": { "slidesPerView": 3, "spaceBetween": 12 ,"slidesPerGroup": 2 },    
                                 "768": { "slidesPerView": 4, "spaceBetween": 24, "slidesPerGroup": 3 },
-                                "1200": { "slidesPerView": 4, "spaceBetween":100, "slidesPerGroup": 3}
+                                "1200": { "slidesPerView": 4, "spaceBetween":24, "slidesPerGroup": 3}
                                 }
                             }'>
-                        <div class="swiper-wrapper">
-                            @foreach($data['seriesValuesWithCategory'] as $item)
-                            @php
-                            $series = $item->attributeValue;
-                            $category_slug = $item->category->slug ?? '';
-                            $attributes_value_slug = $item->attributeValue->slug ?? '';
-                            $title = $series->name ?? '';
-                            $imageName = $item->attributeValue->images;
-                            $imagePath = public_path('images/attribute-values/' . $imageName);
-                            $imageUrl = file_exists($imagePath) && !empty($imageName)
-                            ? asset('images/attribute-values/' . $imageName)
-                            : asset('frontend/assets/himgiri-img/logo/1.png');
-                                @endphp
+                                <div class="swiper-wrapper">
+                                    @foreach($data['seriesValuesWithCategory'] as $item)
+                                        @php
+                                            $series = $item->attributeValue;
+                                            $category_slug = $item->category->slug ?? '';
+                                            $attributes_value_slug = $item->attributeValue->slug ?? '';
+                                            $title = $series->name ?? '';
+                                            $imageName = $item->attributeValue->images;
+                                            $imagePath = public_path('images/attribute-values/' . $imageName);
+                                            $imageUrl = file_exists($imagePath) && !empty($imageName)
+                                            ? asset('images/attribute-values/' . $imageName)
+                                            : asset('frontend/assets/himgiri-img/logo/1.png');
+                                        @endphp
 
-                                <div class="swiper-slide">
-                                <div class="wg-cls style-circle hover-img">
-                                    <a href="{{ route('collections', [
-                                            'category_slug' => $category_slug,
-                                            'attributes_value_slug' => $attributes_value_slug
-                                        ]) }}" class="image img-style d-block">
-                                        <img src="{{ $imageUrl }}"
-                                            data-src="{{ $imageUrl }}"
-                                            alt="{{ $title }}" class="lazyload">
-                                    </a>
-                                    <div class="cls-content text-center">
-                                        <a href="{{ route('collections', [
-                        'category_slug' => $category_slug,
-                        'attributes_value_slug' => $attributes_value_slug
-                    ]) }}" class="link text-md fw-medium">{{ $title }}</a>
-                                    </div>
+                                        <div class="swiper-slide">
+                                            <div class="wg-cls style-circle hover-img">
+                                                <a href="{{ route('collections', [
+                                                        'category_slug' => $category_slug,
+                                                        'attributes_value_slug' => $attributes_value_slug
+                                                    ]) }}" class="image img-style d-block">
+                                                    <img src="{{ $imageUrl }}"
+                                                        data-src="{{ $imageUrl }}"
+                                                        alt="{{ $title }}" class="lazyload">
+                                                </a>
+                                                <div class="cls-content text-center">
+                                                    <a href="{{ route('collections', [
+                                                        'category_slug' => $category_slug,
+                                                        'attributes_value_slug' => $attributes_value_slug
+                                                        ]) }}" class="link text-md fw-medium">{{ $title }}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
+                                <span class="d-flex d-xl-none sw-dot-default sw-pagination-women justify-content-center"></span>
                         </div>
-                        @endforeach
-
-
                     </div>
-                    <span class="d-flex d-xl-none sw-dot-default sw-pagination-women justify-content-center"></span>
                 </div>
             </div>
-
         </div>
     </div>
     <div class="flat-spacing-18">
@@ -190,7 +184,7 @@
         <div class="row align-items-center">
             <div class="col-md-6">
                 <div class="about-us-features wow fadeInLeft step-img">
-                    <img class="w100 ls-is-cached lazyloaded" data-src="{{asset('frontend/assets/himgiri-img/about-us.jpg')}}" src="{{asset('frontend/assets/himgiri-img/about-us.jpg')}}" alt="image-team">
+                    <img class="w100 ls-is-cached lazyloaded" data-src="{{asset('frontend/assets/himgiri-img/about-us-home.jpg')}}" src="{{asset('frontend/assets/himgiri-img/about-us-home.jpg')}}" alt="about">
                 </div>
             </div>
             <div class="col-md-6">

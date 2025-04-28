@@ -198,7 +198,7 @@ $meta_description = 'Himgiri Coolers';
                                 </a>
                             </div>-->
 
-                            <div class="tf-product-info-delivery-return">
+                            <!--<div class="tf-product-info-delivery-return">
                                 <div class="product-delivery">
                                     <div class="icon icon-car2"></div>
                                     <p class="text-md">Estimated delivery time: <span class="fw-medium">3-5 days
@@ -209,7 +209,7 @@ $meta_description = 'Himgiri Coolers';
                                     <p class="text-md">Free shipping on <span class="fw-medium">all orders over
                                             Rs 3000</span></p>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
 
                     </div>
@@ -223,7 +223,7 @@ $meta_description = 'Himgiri Coolers';
 </section>
 <!-- /Product Main -->
 <!-- Product Description -->
-<section class="flat-spacing pt-0">
+<section class="flat-spacing-5 pt-0">
     <div class="container">
         <div class="widget-accordion wd-product-descriptions">
             <div class="accordion-title collapsed" data-bs-target="#description" data-bs-toggle="collapse"
@@ -231,7 +231,7 @@ $meta_description = 'Himgiri Coolers';
                 <span>Descriptions</span>
                 <span class="icon icon-arrow-down"></span>
             </div>
-            <div id="description" class="collapse">
+            <div id="description" class="collapse show">
                 <div class="accordion-body widget-desc">
                     <div class="table-responsive">
                         @if(!empty($data['product_details']->product_description))
@@ -245,13 +245,13 @@ $meta_description = 'Himgiri Coolers';
                 </div>
             </div>
         </div>
-        <div class="widget-accordion wd-product-descriptions">
+        <!--<div class="widget-accordion wd-product-descriptions">
             <div class="accordion-title collapsed" data-bs-target="#material" data-bs-toggle="collapse"
                 aria-expanded="true" aria-controls="material" role="button">
                 <span>Additional info</span>
                 <span class="icon icon-arrow-down"></span>
             </div>
-            <div id="material" class="collapse">
+            <div id="material" class="collapse show">
                 <div class="accordion-body widget-material">
                     <div class="item">
                         <div class="table-responsive">
@@ -277,11 +277,105 @@ $meta_description = 'Himgiri Coolers';
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
 
     </div>
 </section>
 <!-- /Product Description -->
+<!-- People Also Bought -->
+@if (!empty($data['related_products']) && $data['related_products']->isNotEmpty())
+@php
+    $bgColors = ['#f5f5f5', '#fff3d9', '#f4e7fb', '#f4dcdc'];
+    $defaultImage = asset('frontend/assets/himgiri-img/logo/1.png');
+@endphp
+    <section class="flat-spacing-5 pt-0">
+        <div class="container">
+            <div class="flat-title wow fadeInUp">
+                <h4 class="title with-border">People Also Buy</h4>
+            </div>
+            <div class="hover-sw-nav  wow fadeInUp">
+                <div dir="ltr" class="swiper tf-swiper wrap-sw-over" data-swiper='{
+                        "slidesPerView": 2,
+                        "spaceBetween": 12,
+                        "speed": 800,
+                        "observer": true,
+                        "observeParents": true,
+                        "slidesPerGroup": 2,
+                        "navigation": {
+                            "clickable": true,
+                            "nextEl": ".nav-next-bought",
+                            "prevEl": ".nav-prev-bought"
+                        },
+                        "pagination": { "el": ".sw-pagination-bought", "clickable": true },
+                        "breakpoints": {
+                        "768": { "slidesPerView": 5, "spaceBetween": 12, "slidesPerGroup": 5 },
+                        "1200": { "slidesPerView": 5, "spaceBetween": 24, "slidesPerGroup": 5}
+                        }
+                    }'>
+                    <div class="swiper-wrapper">
+                        @foreach ($data['related_products'] as $key => $related_product_row)
+                            @php
+                                $firstImage = $related_product_row->images->get(0)?->image_path;
+                                $secondImage = $related_product_row->images->get(1)?->image_path;
+                                $image1 = $firstImage ? asset('images/product/thumb/' . $firstImage) : $defaultImage;
+                                $image2 = $secondImage ? asset('images/product/thumb/' . $secondImage) : $defaultImage;
+
+                                if($related_product_row->ProductAttributesValues->isNotEmpty()){
+                                    $attributes_value = $related_product_row->ProductAttributesValues->first()->attributeValue->slug;
+                                }
+                            @endphp
+
+                            <div class="swiper-slide">
+                                <div class="card-product style-2 card-product-size">
+                                    <div class="card-product-wrapper"  style="background-color: {{ $bgColors[$key % count($bgColors)] }}; padding:10px;">
+                                        <a
+                                        href="{{ route('products', [
+                                            'product_slug' => $related_product_row->slug,
+                                            'attributes_value_slug' => $attributes_value
+                                        ]) }}" 
+                                        class="product-img">
+                                            <img class="img-product lazyload"
+                                                data-src="{{ $image1 }}"
+                                                src="{{ $image1 }}" alt="{{ $related_product_row->title }}" loading="lazy">
+                                            <img class="img-hover lazyload"
+                                                data-src="{{ $image2 }}"
+                                                src="{{ $image2 }}" alt="{{ $related_product_row->title }}" loading="lazy">
+                                        </a>
+                                    </div>
+                                    <div class="card-product-info">
+                                        <a
+                                        href="{{ route('products', [
+                                            'product_slug' => $related_product_row->slug,
+                                            'attributes_value_slug' => $attributes_value
+                                        ]) }}" 
+                                        class="name-product link fw-medium text-md">
+                                            {{ $related_product_row->title }}
+                                        </a>
+                                        @if($related_product_row->offer_rate)
+                                        <p class="price-wrap fw-medium">
+                                            <span class="price-new text-primary">Rs. {{ $related_product_row->offer_rate ?? '0.00' }}</span>
+                                            <span class="price-old">Rs. {{ $related_product_row->mrp ?? '0.00' }}</span>
+                                        </p>
+                                        @else
+                                        <p class="price-wrap fw-medium">
+                                            <span class="price-new text-primary">Price Not Available .</span>
+                                        </p>
+                                        @endif
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="d-flex d-xl-none sw-dot-default sw-pagination-bought justify-content-center"></div>
+                </div>
+                <div class="d-none d-xl-flex swiper-button-next nav-swiper nav-next-bought"></div>
+                <div class="d-none d-xl-flex swiper-button-prev nav-swiper nav-prev-bought"></div>
+            </div>
+        </div>
+    </section>
+@endif
+<!-- People Also Bought -->
 @endsection
 @push('scripts')
 <script src="{{asset('frontend/assets/js/photoswipe-lightbox.umd.min.js')}}"></script>

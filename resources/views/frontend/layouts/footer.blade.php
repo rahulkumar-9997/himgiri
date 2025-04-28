@@ -1,8 +1,8 @@
  <!-- Footer -->
  <div id="loader" class="loader-wrapper" style="display: none;">
-   <span class="site-loader"> </span>
-   <h3 class="loader-content"> Loading . . . </h3>
-</div>
+    <span class="site-loader"> </span>
+    <h3 class="loader-content"> Loading . . . </h3>
+ </div>
  <footer id="footer" class="footer-default xl-pb-70">
     <div class="footer-top">
        <div class="container">
@@ -14,11 +14,11 @@
              </div>
              <ul class="tf-social-icon style-large">
                 <li>
-                   <a href="https://www.facebook.com/" class="social-item social-facebook">
+                   <a href="https://www.facebook.com/HimgiriCoolersAlmirah/" class="social-item social-facebook" target="_blank">
                       <i class="icon icon-fb"></i>
                    </a>
                 </li>
-                <li>
+                <!-- <li>
                    <a href="https://www.instagram.com/" class="social-item social-instagram">
                       <i class="icon icon-instagram"></i>
                    </a>
@@ -31,7 +31,7 @@
                    <a href="https://x.com/" class="social-item social-x">
                       <i class="icon icon-x"></i>
                    </a>
-                </li>
+                </li> -->
              </ul>
           </div>
        </div>
@@ -59,15 +59,11 @@
                                </svg>
                             </span>
                             <a target="_blank"
-                               href="https://www.google.com/maps?q=123Yarranst,Punchbowl,NSW2196,Australia">
-                               Siddhant Industries
-                               <br>
-                               C-4, Industrial Area,
-                               <br>
-                               Tajopur, Maunath Bhanjan - 275101 (U.P.)
+                               href="https://www.google.com/maps/place/Himgiri+Coolers/@25.9225304,83.5610756,17z/data=!4m6!3m5!1s0x39918ae8328c6e67:0xc36a0453d5ece215!8m2!3d25.9230997!4d83.5628244!16s%2Fg%2F11g9m5fvnt?entry=ttu&g_ep=EgoyMDI1MDQyMy4wIKXMDSoASAFQAw%3D%3D">
+                               Industrial Estate, D 5 & 6, Munshi Pura, Mau, <br>Uttar Pradesh 275101
                             </a>
                          </li>
-                         <li class="item">
+                         <!--<li class="item">
                             <span class="box-icon">
                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
                                   xmlns="http://www.w3.org/2000/svg">
@@ -76,8 +72,8 @@
                                      fill="#0D0D0D" />
                                </svg>
                             </span>
-                            <a href="tel:18888383022">(64) 8342 1245</a>
-                         </li>
+                            <a href="tel:+918048740318">+91 8048740318</a>
+                         </li>-->
                          <li class="item">
                             <span class="box-icon">
                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
@@ -102,37 +98,32 @@
              </div>
              <div class="footer-inner-wrap footer-col-block s2">
                 <div class="footer-heading footer-heading-mobile text-xl fw-medium">
-                   Subscribe Newsletter
+                   Reach us On
                 </div>
                 <div class="tf-collapse-content">
                    <div class="footer-newsletter">
-                      <p>
-                         We invite you to register to read the latest news, offers and events about
-                         our company. We promise not spam your inbox.
-                      </p>
-                      <form action="#" class="form-newsletter" method="post" accept-charset="utf-8"
-                         data-mailchimp="true">
-                         <div class="subscribe-content">
-                            <fieldset class="email">
-                               <input type="email" name="email-form" class="subscribe-email"
-                                  placeholder="Email address" tabindex="0" aria-required="true"
-                                  required>
-                            </fieldset>
+                     <form  action="{{ route('contact-us.store') }}" accept="multipart/form-data" method="post" class="form-default  footer-form" id="enquiryForm">
+                        @csrf
+                         <div class="wrap">
+                            <div class="cols">
+                               <fieldset>
+                                  <input id="name" placeholder="Enter your name *" class="radius-8" type="text" name="name">
+                               </fieldset>
+                               <fieldset>
+                                  <input id="phone_number" placeholder="Enter your phone no. *" class="radius-8" maxlength="10" type="text" name="phone_number">
+                               </fieldset>
+                            </div>
+                            <div class="cols">
+                              <fieldset>
+                                  <input id="email" placeholder="Enter your email id's" class="radius-8" type="email" name="email">
+                               </fieldset>
+                               <fieldset class="textarea">
+                                  <textarea id="message" name="message" class="radius-8"></textarea>
+                               </fieldset>
+                            </div>
                             <div class="button-submit">
-                               <button class="subscribe-button animate-btn">
-                                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                     <g clip-path="url(#clip0_5296_3345)">
-                                        <path
-                                           d="M17.7938 8.50229L17.7931 8.50162L14.1192 4.84537C13.8439 4.57147 13.3988 4.57249 13.1248 4.84776C12.8508 5.123 12.8519 5.56818 13.1271 5.84212L15.5938 8.29687H0.703125C0.314789 8.29687 0 8.61166 0 9C0 9.38833 0.314789 9.70312 0.703125 9.70312H15.5938L13.1272 12.1579C12.8519 12.4318 12.8509 12.877 13.1248 13.1522C13.3988 13.4275 13.844 13.4285 14.1192 13.1546L17.7932 9.49837L17.7938 9.4977C18.0692 9.22285 18.0683 8.77623 17.7938 8.50229Z"
-                                           fill="white" />
-                                     </g>
-                                     <defs>
-                                        <clipPath id="clip0_5296_3345">
-                                           <rect width="18" height="18" fill="white" />
-                                        </clipPath>
-                                     </defs>
-                                  </svg>
+                               <button class="tf-btn animate-btn" type="submit">
+                                  Submit
                                </button>
                             </div>
                          </div>
@@ -157,7 +148,7 @@
                          <li>
                             <a href="{{route('blog')}}">Blog</a>
                          </li>
-                        
+
                       </ul>
                    </div>
                 </div>
@@ -166,10 +157,10 @@
                    <div class="tf-collapse-content">
                       <ul class="footer-menu-list">
                          <li>
-                            <a href="">Coolers</a>
+                           <a href="{{ url('categories/air-coolers') }}">Coolers</a>
                          </li>
                          <li>
-                            <a href="term-and-condition.html">Almirah</a>
+                           <a href="{{ url('categories/almirah') }}">Almirah</a>
                          </li>
                          <li>
                             <a href="">Privacy Policy</a>
@@ -177,7 +168,7 @@
                          <li>
                             <a href="">Term & Conditions</a>
                          </li>
-                         
+
                       </ul>
                    </div>
                 </div>
@@ -189,24 +180,25 @@
        <div class="container">
           <div class="footer-bottom-wrap text-center">
              <p class="text-dark">
-               Copyright © {{ date('Y') }} by himgiricoolers.com |
-               <span class="fw-medium"> Designed & Maintained by : </span>
-                  <a href="https://wizards.co.in/" target="_blank">Wizards</a>
-               All Rights
-                Reserved.</p>
+                Copyright © {{ date('Y') }} by himgiricoolers.com |
+                <span class="fw-medium"> Designed & Maintained by : </span>
+                <a href="https://wizards.co.in/" target="_blank">Wizards</a>
+                All Rights
+                Reserved.
+             </p>
           </div>
        </div>
     </div>
  </footer>
  <!-- Toast Container -->
-   <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-      <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-         <div class="d-flex">
-               <div class="toast-body" id="toast-body">
-                  <!-- Message goes here -->
-               </div>
-               <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-         </div>
-      </div>
-   </div>
+ <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+       <div class="d-flex">
+          <div class="toast-body" id="toast-body">
+             <!-- Message goes here -->
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+       </div>
+    </div>
+ </div>
  <!-- /Footer -->

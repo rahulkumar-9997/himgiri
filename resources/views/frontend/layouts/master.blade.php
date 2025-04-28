@@ -13,6 +13,7 @@
 			@include('frontend.layouts.footer')
 			@include('frontend.layouts.search-bar')
 		</div>
+		@include('frontend.layouts.mobile-menu')
 		@include('frontend.layouts.footerjs')
 		@stack('scripts')
 	</body>

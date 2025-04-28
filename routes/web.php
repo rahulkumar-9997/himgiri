@@ -78,6 +78,7 @@ Route::middleware([TrackVisitor::class])->group(function () {
     Route::get('contact-us', [FrontendController::class, 'contactUs'])->name('contact-us');
     Route::post('contact-us', [FrontendController::class, 'contactUsStore'])->name('contact-us.store');
     Route::get('collections/{category_slug}/{attributes_value_slug}', [FrontendController::class, 'collections'])->name('collections');
+    Route::get('categories/{category_slug}', [FrontendController::class, 'showCategoryProduct'])->name('categories')->withoutMiddleware('auth');
     Route::get('products/{product_slug}/{attributes_value_slug}', [FrontendController::class, 'showProductDetails'])->name('products');
     Route::get('blog', [FrontendController::class, 'blog'])->name('blog');
     Route::get('blog/{slug}', [FrontendController::class, 'blogDetails'])->name('blog.details');

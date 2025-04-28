@@ -8,7 +8,7 @@
     <div class="container">
         <ul class="breadcrumb-list">
             <li class="item-breadcrumb">
-                <a href="" class="text">Home</a>
+                <a href="{{ url('/') }}" class="text">Home</a>
             </li>
 
             <li class="item-breadcrumb dot">
@@ -23,63 +23,46 @@
 <!-- /Breadcrumb -->
 <section class="contact-us-box section_space">
     <div class="container">
-        <div class="row justify-content-lg-between mt-none-30">
+        <div class="contact-us-page">
             <div class="contact_info_box row mt-none-30">
-                <div class="col-lg-3 col-md-6 col-sm-6 mt-30">
+                <div class="col-lg-4 col-md-4 col-sm-4 mt-30">
                     <div class="contact_iconbox">
                         <div class="iconbox_icon box-icon">
                             <i class="icon icon-phone"></i>
                         </div>
                         <div class="iconbox_content">
                             <h2 class="iconbox_title">Call Us On</h2>
-                            <p>
+                            <!-- <p>
                                 Mon-Fri from 8am to 5pm
-                            </p>
-                            <a href="tel:+919900000000">+91 0000000000</a>
+                            </p> -->
+                            <a href="tel:+918048740318">+91 8048740318</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 mt-30">
-                    <div class="contact_iconbox">
-                        <div class="iconbox_icon box-icon">
-                            <i class="icon icon-phone"></i>
-                        </div>
-                        <div class="iconbox_content">
-                            <h2 class="iconbox_title">Call Us On</h2>
-                            <p>
-                                Mon-Fri from 8am to 5pm
-                            </p>
-                            <a href="tel:+919900000000">+91 0000000000</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 mt-30">
+                
+                <div class="col-lg-4 col-md-4 col-sm-4 mt-30">
                     <div class="contact_iconbox">
                         <div class="iconbox_icon box-icon">
                             <i class="icon icon-mail"></i>
                         </div>
                         <div class="iconbox_content">
                             <h2 class="iconbox_title">Email Us</h2>
-                            <p>
-                                Speak to our Friendly team.
-                            </p>
+                           
                             <a href="mailto:info@himgiricoolers.com">
                                 info@himgiricooler.com
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 mt-30">
+                <div class="col-lg-4 col-md-4 col-sm-4 mt-30">
                     <div class="contact_iconbox">
                         <div class="iconbox_icon box-icon">
                             <i class="icon icon-location"></i>
                         </div>
                         <div class="iconbox_content">
                             <h2 class="iconbox_title">Our Location</h2>
-                            <p>
-                                Visit our shop.
-                            </p>
-                            <a> #33-01, 77 Sigara Road</a>
+                            
+                            <a>Industrial Estate, D 5 & 6, Munshi Pura, Mau, <br>Uttar Pradesh 275101</a>
                         </div>
                     </div>
                 </div>
@@ -89,7 +72,7 @@
             <div class="col-lg-6 d-flex align-items-center">
                 <div class="map-section">
                     <div class="google-map-area w-100">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d133366.30176332663!2d82.9617778087673!3d25.294305536048245!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398e2d3ef62a58df%3A0x2b13c40c2d0470b0!2sSanskar%20Sarees!5e0!3m2!1sen!2sin!4v1622203244985!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3588.3865243739792!2d83.5610756!3d25.9225304!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39918ae8328c6e67%3A0xc36a0453d5ece215!2sHimgiri%20Coolers!5e0!3m2!1sen!2sin!4v1745651752295!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                     </div>
                 </div>
             </div>
@@ -123,7 +106,7 @@
                                 </div>
                                 <div class="button-submit">
                                     <button class="tf-btn animate-btn" type="submit">
-                                        Send
+                                        Submit
                                     </button>
                                 </div>
                             </div>

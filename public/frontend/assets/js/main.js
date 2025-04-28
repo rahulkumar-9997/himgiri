@@ -927,7 +927,7 @@
   /* Handle Sidebar Filter 
   -------------------------------------------------------------------------------------*/
   var handleSidebarFilter = function () {
-    $("#filterShop,.sidebar-btn").on("click",function () {
+    $(document).on('click', '#filterShop,.sidebar-btn', function(e) {
       if ($(window).width() <= 1200) {
         $(".sidebar-filter,.overlay-filter").addClass("show");
       }

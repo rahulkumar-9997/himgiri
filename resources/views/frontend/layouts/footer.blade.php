@@ -163,10 +163,10 @@
                            <a href="{{ url('categories/almirah') }}">Almirah</a>
                          </li>
                          <li>
-                            <a href="">Privacy Policy</a>
+                            <a href="{{ route('privacy.policy')}}">Privacy Policy</a>
                          </li>
                          <li>
-                            <a href="">Term & Conditions</a>
+                            <a href="{{ route('terms-and-conditions')}}">Terms & Conditions</a>
                          </li>
 
                       </ul>

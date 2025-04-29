@@ -21,8 +21,8 @@
                 'attributes_value_slug' => $lastSegment
             ]) }}"
             class="product-img">
-                <img class="img-product lazyload" data-src="{{ $image1 }}" src="{{ $image1 }}" alt="{{ $product->title ?? 'No Title' }}">
-                <img class="img-hover lazyload" data-src="{{ $image2 }}" src="{{ $image2 }}" alt="{{ $product->title ?? 'No Title' }}">
+                <img class="img-product lazyload" data-src="{{ $image1 }}" src="{{ $image1 }}" alt="{{ $product->title ?? 'No Title' }}" loading="lazy">
+                <!--<img class="img-hover lazyload" data-src="{{ $image2 }}" src="{{ $image2 }}" alt="{{ $product->title ?? 'No Title' }}" loading="lazy">-->
             </a>
             <!--<div class="on-sale-wrap">
                 <span class="on-sale-item">20% Off</span>

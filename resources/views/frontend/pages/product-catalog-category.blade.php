@@ -1,11 +1,12 @@
-@php
-$title = $category->title;
-@endphp
-@extends('frontend.layouts.master')
-@section('title', 'Himgiri - ' . $title)
-@section('description', 'Himgiri - ' . $category->title)
-@section('keywords', 'Himgiri, ' . $category->title . ', Himgiri, Coolers, Almirah')
 
+@if($primary_category)
+    @section('title', 'Himgiri - ' . $primary_category->title)
+    @section('description', 'Himgiri - ' . strip_tags(Str::limit($primary_category->primary_category_description, 160)))
+@else
+    @section('title', 'Himgiri - ' . $category->title)
+    @section('description', 'Himgiri - ' . $category->title)
+@endif
+@extends('frontend.layouts.master')
 @section('main-content')
 <!-- Breadcrumb -->
 <div class="tf-breadcrumb mb-27">
@@ -31,8 +32,17 @@ $title = $category->title;
         <div class="row">
             <div class="col-lg-12">
                 <div class="h1-heading">
+                    @if($primary_category)
+                        <h1>
+                            {{ $primary_category->title }}
+                        </h1>
+                    @else
+                        <h1>
+                            {{ $category->title }}
+                        </h1>
+                    @endif
                     <h1>
-                        {{ $category->title }}
+                       
                     </h1>
                 </div>
             </div>
@@ -40,6 +50,16 @@ $title = $category->title;
         <div class="row" id="product-catalog-frontend">
             @include('frontend.pages.ajax-product-category-catalog', [$products, $attributes_with_values_for_filter_list])
         </div>
+        @if($primary_category)
+        <div class="row justify-content-md-center primary-category-div">
+            <div class="col-xl-3"></div>
+            <div class="col-xl-9">
+                <div class="primary_category_desc">
+                    {!! $primary_category->primary_category_description !!}
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 </section>
 @endsection

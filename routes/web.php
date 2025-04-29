@@ -85,6 +85,8 @@ Route::middleware([TrackVisitor::class])->group(function () {
     Route::get('search-modal-open', [SearchController::class, 'searchModalOpen'])->name('search-modal-open');
     Route::get('/search/suggestions', [SearchController::class, 'searchSuggestions'])->name('search.suggestions');
     Route::get('search', [SearchController::class, 'searchListProduct'])->name('search');
+    Route::get('privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('privacy.policy');
+    Route::get('terms-and-conditions', [FrontendController::class, 'termsAndConditions'])->name('terms-and-conditions');
 });
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::post('/update-counter', [FrontendController::class, 'updateCounter'])->name('update.counter');

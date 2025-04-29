@@ -1,6 +1,12 @@
+
+@if($primary_category)
+    @section('title', 'Himgiri - ' . $primary_category->title)
+    @section('description', 'Himgiri - ' . strip_tags(Str::limit($primary_category->primary_category_description, 160)))
+@else
+    @section('title', 'Himgiri - ' . $category->title . ' ' . $attributeValue->name)
+    @section('description', 'Himgiri - ' . $category->title . ' : ' . $attributeValue->name)
+@endif
 @extends('frontend.layouts.master')
-@section('title', 'Himgiri ' . $category->title . ' ' . $attributeValue->name . ' in Varanasi.')
-@section('description', 'Himgiri - ' . $category->title . ' : ' . $attributeValue->name)
 @section('main-content')
 <!-- Breadcrumb -->
 <div class="tf-breadcrumb space-t">
@@ -26,15 +32,31 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="h1-heading">
-                    <h1>
-                        {{ $attributeValue->name }} {{ $category->title }} 
-                    </h1>
+                    @if($primary_category)
+                        <h1>
+                            {{ $primary_category->title }}
+                        </h1>
+                    @else
+                        <h1>
+                            {{ $attributeValue->name }} {{ $category->title }} 
+                        </h1>
+                    @endif
                 </div>
             </div>
         </div>
         <div class="row" id="product-catalog-frontend">
             @include('frontend.pages.ajax-product-catalog', [$products, $attributes_with_values_for_filter_list])
         </div>
+        @if($primary_category)
+        <div class="row justify-content-md-center primary-category-div">
+            <div class="col-xl-3"></div>
+            <div class="col-xl-9">
+                <div class="primary_category_desc">
+                    {!! $primary_category->primary_category_description !!}
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 </section>
 @endsection

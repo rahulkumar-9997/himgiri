@@ -31,7 +31,9 @@ class FrontendController extends Controller
     public function home()
     {
         $data['banner'] = Banner::latest('id')->get(['id', 'image_path_desktop', 'link_desktop', 'title']);
-
+        $data['primary_category'] = PrimaryCategory::where('status', 1)
+        ->orderBy('title')
+        ->get(['id', 'title', 'link']);
         [$seriesAttribute, $modelAttribute, $airCoolerCategory, $almirahCategory] = [
             Attribute::where('title', 'Series')->first(),
             Attribute::where('title', 'Model')->first(),
@@ -68,12 +70,39 @@ class FrontendController extends Controller
 
     public function blog()
     {
-        return view('frontend.pages.blog');
+        $blogs = Blog::select('id', 'title', 'slug', 'bog_description', 'blog_image')->get();
+        return view('frontend.pages.blog', compact('blogs'));
     }
 
-    public function blogDetails()
+    public function blogDetails($slug)
     {
-        return view('frontend.pages.blog-details');
+        $blog = Blog::with([
+            'category',
+            'paragraphs.productLinks.product' => function ($query) {
+                $query->with([
+                    'images' => function ($query) {
+                        $query->select('id', 'product_id', 'image_path')->orderBy('sort_order');
+                    },
+                    'ProductAttributesValues' => function ($query) {
+                        $query->select('id', 'product_id', 'product_attribute_id', 'attributes_value_id')
+                            ->with([
+                                'attributeValue:id,slug'
+                            ])
+                            ->orderBy('id');
+                    }
+                ])
+                ->leftJoin('inventories', function ($join) {
+                    $join->on('products.id', '=', 'inventories.product_id')
+                        ->whereRaw('inventories.mrp = (SELECT MIN(mrp) FROM inventories WHERE product_id = products.id)');
+                })
+                ->select('products.*', 'inventories.mrp', 'inventories.offer_rate', 'inventories.purchase_rate', 'inventories.sku');
+            }
+        ])
+        ->where('slug', $slug)
+        ->firstOrFail();
+       
+        DB::disconnect();
+        return view('frontend.pages.blog-details', compact('blog'));
     }
 
     public function contactUs()
@@ -119,6 +148,7 @@ class FrontendController extends Controller
 
     public function collections(Request $request, $category_slug, $attributes_value_slug)
     {
+        $primary_category = PrimaryCategory::where('link', $request->url())->first();
         $category = Category::select('id', 'title', 'slug')->where('slug', $category_slug)->first();
         $attributeValue = Attribute_values::select('id', 'name', 'slug', 'attributes_id')->where('slug', $attributes_value_slug)->first();
 
@@ -253,6 +283,7 @@ class FrontendController extends Controller
             'products',
             'attributeValue',
             'category',
+            'primary_category',
             'attributes_with_values_for_filter_list',
         ));
     }
@@ -260,8 +291,8 @@ class FrontendController extends Controller
     public function showCategoryProduct(Request $request, $categorySlug)
     {
         try {
-            //$primary_category = PrimaryCategory::where('link', $request->url())->first();
-            Log::info('Filters: ' . json_encode($request->query()));
+            $primary_category = PrimaryCategory::where('link', $request->url())->first();
+            //Log::info('Filters: ' . json_encode($primary_category));
             $category = Category::where('slug', $categorySlug)->first();
             $productsQuery = Product::where('category_id', $category->id)->where('product_status', 1);
 
@@ -363,7 +394,8 @@ class FrontendController extends Controller
                 }
             }
 			DB::disconnect();
-            return view('frontend.pages.product-catalog-category', compact('products', 'category', 'attributes_with_values_for_filter_list'));
+            //return response()->json($primary_category);
+            return view('frontend.pages.product-catalog-category', compact('products', 'category', 'attributes_with_values_for_filter_list', 'primary_category'));
         } catch (\Exception $e) {
             Log::error('Error fetching product catalog: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
@@ -435,6 +467,14 @@ class FrontendController extends Controller
         /**Related product display */
         //return response()->json($data['related_products']);
         return view('frontend.pages.products', compact('data'));
+    }
+
+    public function privacyPolicy(){
+        return view('frontend.pages.privacy-policy');
+    }
+
+    public function termsAndConditions(){
+        return view('frontend.pages.terms-and-conditions');
     }
     
 }

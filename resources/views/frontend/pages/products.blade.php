@@ -337,9 +337,9 @@ $meta_description = 'Himgiri Coolers';
                                             <img class="img-product lazyload"
                                                 data-src="{{ $image1 }}"
                                                 src="{{ $image1 }}" alt="{{ $related_product_row->title }}" loading="lazy">
-                                            <img class="img-hover lazyload"
+                                            <!-- <img class="img-hover lazyload"
                                                 data-src="{{ $image2 }}"
-                                                src="{{ $image2 }}" alt="{{ $related_product_row->title }}" loading="lazy">
+                                                src="{{ $image2 }}" alt="{{ $related_product_row->title }}" loading="lazy"> -->
                                         </a>
                                     </div>
                                     <div class="card-product-info">

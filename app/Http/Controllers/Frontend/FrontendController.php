@@ -8,6 +8,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Attribute_values;
 use App\Models\Attribute;
+use App\Models\CustomerCareRequest;
+use Intervention\Image\Facades\Image;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use App\Models\Inventory;
@@ -25,6 +27,8 @@ use App\Models\MapAttributesValueToCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Counter;
+use Illuminate\Support\Facades\File;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FrontendController extends Controller
 {
@@ -142,6 +146,115 @@ class FrontendController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong, please try again later.' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function customerCare()
+    {
+        $category = Category::select('id', 'title', 'slug')->get();
+        return view('frontend.pages.customer-care', compact('category'));
+    }
+
+    public function getModelsByCategory(Request $request)
+    {
+        $category_id = $request->category_id;
+        $get_only_model_attributes = Attribute::where('title', 'Model')->first();
+        $mappedValues = MapAttributesValueToCategory::where('category_id', $category_id)
+            ->where('attributes_id', $get_only_model_attributes->id)
+            ->with('attributeValue')
+            ->get()
+            ->pluck('attributeValue')
+            ->filter();
+
+        return response()->json($mappedValues->values());
+    }
+
+    public function customerCareDataStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'category' => 'required|integer|exists:category,id',
+            'model' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone_number' => 'required|string|size:10',
+            'product_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'message' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $category = Category::findOrFail($request->category);
+            $ticketId = strtoupper('TKT-' . Str::random(8));
+            $imagePath = null;
+            $pdfPath = null;
+
+            if ($request->hasFile('product_image')) {
+                $categoryName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($category->title));
+                $modelName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($request->model)); 
+                $image = $request->file('product_image');
+
+                $baseFilename = $categoryName . '-' . $modelName . '-' . Str::random(5);
+                $imageFilename = $baseFilename . '.jpg';
+
+                $directory = public_path('uploads/customer-care');
+                $directory_pdf = public_path('uploads/customer-care/pdf');
+                if (!File::exists($directory)) {
+                    File::makeDirectory($directory, 0755, true);
+                }
+                if (!File::exists($directory_pdf)) {
+                    File::makeDirectory($directory_pdf, 0755, true);
+                }
+                $imageInstance = Image::make($image)->encode('jpg', 75);
+                $imagePath = 'uploads/customer-care/' . $imageFilename;
+                $imageInstance->save(public_path($imagePath));
+                $careRequest = CustomerCareRequest::create([
+                    'ticket_id' => $ticketId,
+                    'category_name' => $category->title,
+                    'model_name' => $request->model,
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone_number' => $request->phone_number,
+                    'product_image' => $imageFilename,
+                    'message' => $request->message,
+                ]);
+
+                $pdf = Pdf::loadView('frontend.emails.customer_care_pdf', ['careRequest' => $careRequest]);
+                $pdfFilename = $baseFilename.'.pdf';
+                $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFilename);
+                $pdf->save($pdfPath);
+
+                Mail::send('frontend.emails.customer_care_ticket', ['careRequest' => $careRequest], function ($message) use ($careRequest, $pdfPath) {
+                    $message->to('rahulkumarmaurya464@gmail.com')
+                            ->subject('New Customer Care Ticket: ' . $careRequest->ticket_id)
+                            ->attach($pdfPath, [
+                                'as' => 'CustomerCareTicket.pdf',
+                                'mime' => 'application/pdf',
+                            ]);
+                });
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Your request has been submitted successfully. Our team contact you shortly. Your Ticket ID is ' . $ticketId . '.',
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product image is required.',
+            ], 400);
+
+        } catch (\Exception $e) {
+            Log::error('Customer Care Request Failed: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. Please try again later.',
             ], 500);
         }
     }

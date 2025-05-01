@@ -61,10 +61,10 @@
             ]) }}" class="name-product link fw-medium text-md">
                 {{ $product->title ?? 'No Title' }}
             </a>
-            @if($product->offer_rate)
+            @if($product->mrp)
             <p class="price-wrap fw-medium">
-                <span class="price-new text-primary">Rs. {{ $product->offer_rate ?? '0.00' }}</span>
-                <span class="price-old">Rs. {{ $product->mrp ?? '0.00' }}</span>
+                <span class="price-new text-primary">Rs. {{ $product->mrp ?? '0.00' }}</span>
+                <!-- <span class="price-old">Rs. {{ $product->mrp ?? '0.00' }}</span> -->
             </p>
             @else
             <p class="price-wrap fw-medium">

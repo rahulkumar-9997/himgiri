@@ -152,13 +152,13 @@ class InventoryController extends Controller
                                     <input type="number" name="mrp[]" class="form-control" required="">
                                 </td>
                                 <td>
-                                    <input type="number" name="purchase_rate[]" class="form-control" required="">
+                                    <input type="number" name="purchase_rate[]" class="form-control">
                                 </td>
                                 <td>
-                                    <input type="number" name="offer_rate[]" class="form-control" required="">
+                                    <input type="number" name="offer_rate[]" class="form-control">
                                 </td>
                                 <td>
-                                    <input type="number" name="stock_quantity[]" class="form-control" required="">
+                                    <input type="number" name="stock_quantity[]" class="form-control">
                                 </td>
                                 <td style="display: none;">
                                     <input type="text" name="sku[]" class="form-control" value="' . $uniqueSku . '" readonly>
@@ -196,13 +196,13 @@ class InventoryController extends Controller
             'product_id' => 'required|exists:products,id',
             'mrp' => 'required|array|distinct',
             'mrp.*' => 'required|numeric|min:0',
-            'purchase_rate' => 'required|array',
-            'purchase_rate.*' => 'required|numeric|min:0',
-            'offer_rate' => 'required|array',
-            'offer_rate.*' => 'required|numeric|min:0',
-            'stock_quantity' => 'required|array',
-            'stock_quantity.*' => 'required|integer|min:0',
-            'sku' => 'required|array',
+            'purchase_rate' => 'nullable|array',
+            'purchase_rate.*' => 'nullable|numeric|min:0',
+            'offer_rate' => 'nullable|array',
+            'offer_rate.*' => 'nullable|numeric|min:0',
+            'stock_quantity' => 'nullable|array',
+            'stock_quantity.*' => 'nullable|integer|min:0',
+            'sku' => 'nullable|array',
             //'sku.*' => 'required|string|unique:inventories,sku',
             'inventory_id' => 'array',
         ]);
@@ -215,10 +215,10 @@ class InventoryController extends Controller
                 $inventoryData = [
                     'product_id' => $product_id,
                     'mrp' => $mrp,
-                    'purchase_rate' => $request->input('purchase_rate')[$key],
-                    'offer_rate' => $request->input('offer_rate')[$key],
-                    'stock_quantity' => $request->input('stock_quantity')[$key],
-                    'sku' => $request->input('sku')[$key],
+                    'purchase_rate' => $request->input('purchase_rate')[$key] ?? null,
+                    'offer_rate' => $request->input('offer_rate')[$key] ?? null,
+                    'stock_quantity' => $request->input('stock_quantity')[$key] ?? 0,
+                    'sku' => $request->input('sku')[$key] ?? null,
                 ];
 
                 if (isset($inventory_ids[$key]) && !empty($inventory_ids[$key])) {

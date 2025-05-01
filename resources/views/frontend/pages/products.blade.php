@@ -124,19 +124,19 @@ $meta_description = 'Himgiri Coolers';
                         <div class="tf-product-info-list other-image-zoom">
                             <div class="tf-product-info-heading">
                                 <h1 class="product-info-name fw-medium">
-                                    {{$data['product_details']->title}}
+                                    {{ $data['product_details']->title }}
                                 </h1>
-                                @if($data['product_details']->offer_rate){
+                                @if($data['product_details']->mrp)
                                 <div class="product-info-price">
                                     <div class="display-sm price-new price-on-sale">
-                                        Rs. {{ $product->offer_rate ?? '0.00' }}
+                                        Rs. {{ $data['product_details']->mrp ?? '0.00' }}
                                     </div>
-                                    <div class="display-sm price-old">
+                                    <!-- <div class="display-sm price-old">
                                         Rs. {{ $product->mrp ?? '0.00' }}
-                                    </div>
+                                    </div> -->
                                     <!-- <span class="badge-sale">20% Off</span> -->
                                 </div>
-                                }
+                                
                                 @else
                                 <div class="product-info-price">
                                     <div class="display-sm price-new price-on-sale">
@@ -351,10 +351,10 @@ $meta_description = 'Himgiri Coolers';
                                         class="name-product link fw-medium text-md">
                                             {{ $related_product_row->title }}
                                         </a>
-                                        @if($related_product_row->offer_rate)
+                                        @if($related_product_row->mrp)
                                         <p class="price-wrap fw-medium">
-                                            <span class="price-new text-primary">Rs. {{ $related_product_row->offer_rate ?? '0.00' }}</span>
-                                            <span class="price-old">Rs. {{ $related_product_row->mrp ?? '0.00' }}</span>
+                                            <span class="price-new text-primary">Rs. {{ $related_product_row->mrp ?? '0.00' }}</span>
+                                            <!-- <span class="price-old">Rs. {{ $related_product_row->mrp ?? '0.00' }}</span> -->
                                         </p>
                                         @else
                                         <p class="price-wrap fw-medium">

@@ -6,6 +6,7 @@
 <link rel="canonical" href="{{ url()->current() }}" />
 <meta name="base-url" content="{{ url('/') }}">
 <meta name="author" content="Himgiri">
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 <title>@yield('title')</title>
 <link rel="stylesheet" href="{{asset('frontend/assets/fonts/fonts.css')}}">
 <link rel="stylesheet" href="{{asset('frontend/assets/fonts/font-icons.css')}}">

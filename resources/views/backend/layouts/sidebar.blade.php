@@ -80,6 +80,9 @@
             <div class="collapse" id="sidebarProducts_user">
                <ul class="nav sub-navbar-nav">
                      <li class="sub-nav-item">
+                        <a class="sub-nav-link" href="{{ route('customer-care-request') }}">Customer Care Request</a>
+                     </li>
+                     <li class="sub-nav-item">
                         <a class="sub-nav-link" href="{{ route('manage-customer') }}">Customer List</a>
                      </li>
                      

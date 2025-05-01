@@ -6,12 +6,14 @@ use App\Models\Customer;
 use App\Models\Orders;
 use App\Imports\CustomerImport;
 use App\Models\GroupCategories;
+use App\Models\CustomerCareRequest;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 use Exception;
 
 
@@ -305,5 +307,29 @@ class CustomerControllerBackend extends Controller
             'status' => 'success',
             'message' => 'Customer updated successfully',
         ]);
+    }
+
+    public function customerCareRequestList(Request $request){
+        $data['customer_care_request_list'] = CustomerCareRequest::orderBy('id', 'desc')->get();
+        return view('backend.manage-customer.customer-care-request.index', compact('data'));
+    }
+
+    public function customerCareRequestDelete($id){
+        try {
+            $careRequest = CustomerCareRequest::findOrFail($id);
+            $imagePath = public_path('uploads/customer-care/' . $careRequest->product_image);
+            $pdfFileName = str_replace('.jpg', '.pdf', $careRequest->product_image);
+            $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFileName);
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
+            if (File::exists($pdfPath)) {
+                File::delete($pdfPath);
+            }
+            $careRequest->delete();
+            return redirect()->back()->with('success', 'Customer care request deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete. Error: ' . $e->getMessage());
+        }
     }
 }

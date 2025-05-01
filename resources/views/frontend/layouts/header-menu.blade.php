@@ -97,14 +97,14 @@
                                                    class="name-product link fw-medium text-md">
                                                       {{ $product['product_name'] }}
                                                    </a>
-                                                   @if($product['offer_rate'])
+                                                   @if($product['mrp'])
                                                       <p class="price-wrap fw-medium">
                                                          <span class="price-new text-primary">
                                                             Rs. {{ $product['mrp'] }}
                                                          </span>
-                                                         <span class="price-old">
+                                                         <!-- <span class="price-old">
                                                             Rs. {{ $product['offer_rate'] }}
-                                                         </span>
+                                                         </span> -->
                                                       </p>
                                                    @else
                                                       <p class="price-wrap fw-medium">
@@ -147,6 +147,9 @@
                   </li>
                   <li class="menu-item">
                      <a href="{{ route('contact-us') }}" class="item-link">Contact Us</a>
+                  </li>
+                  <li class="menu-item">
+                     <a href="{{ route('customer-care') }}" class="item-link">Customer Care</a>
                   </li>
                </ul>
             </nav>

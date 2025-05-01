@@ -377,7 +377,9 @@ svg path {
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
-
+.image-file input[type=file]{
+  line-height: 16px;
+}
 textarea,
 input[type=text],
 input[type=password],
@@ -392,6 +394,7 @@ input[type=email],
 input[type=url],
 input[type=search],
 input[type=tel],
+input[type=file],
 input[type=color] {
   font-family: "Poppins", sans-serif;
   border: 1px solid var(--line);
@@ -5213,8 +5216,8 @@ button.animate-btn::after,
   top: 50%;
   transform: translateY(-50%);
   font-size: 10px;
-  z-index: -1;
-  font-weight: 400;
+  /* z-index: -1; */
+  font-weight: 600;
 }
 .tf-select:hover select {
   border-color: var(--rgba-dark-2);
@@ -5421,7 +5424,7 @@ button.animate-btn::after,
 .form-default .cols {
   display: flex;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 .form-default .cols > * {
   width: 100%;

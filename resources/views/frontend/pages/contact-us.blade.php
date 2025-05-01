@@ -1,7 +1,7 @@
 @extends('frontend.layouts.master')
 @section('title','Himgiri : Contact us')
-@section('description', 'Best Kitchen Retail Store in Varanasi now goes Online')
-@section('keywords', 'Best Kitchen Retail Store in Varanasi now goes Online')
+@section('description', 'Industrial Estate, D 5 & 6, Munshi Pura, Mau, Uttar Pradesh 275101')
+<!-- @section('keywords', 'Best Kitchen Retail Store in Varanasi now goes Online') -->
 @section('main-content')
 <!-- Breadcrumb -->
 <div class="tf-breadcrumb space-t">

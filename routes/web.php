@@ -87,6 +87,10 @@ Route::middleware([TrackVisitor::class])->group(function () {
     Route::get('search', [SearchController::class, 'searchListProduct'])->name('search');
     Route::get('privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('privacy.policy');
     Route::get('terms-and-conditions', [FrontendController::class, 'termsAndConditions'])->name('terms-and-conditions');
+    Route::get('customer-care', [FrontendController::class, 'customerCare'])->name('customer-care');
+    Route::post('/get-models-by-category', [FrontendController::class, 'getModelsByCategory'])->name('get.models.by.category');
+    Route::post('customer-care', [FrontendController::class, 'customerCareDataStore'])->name('customer-care.store');
+
 });
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::post('/update-counter', [FrontendController::class, 'updateCounter'])->name('update.counter');
@@ -259,6 +263,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('manage-customer/update/{id}', [CustomerControllerBackend::class, 'editCustomerFormSubmit'])->name('manage-customer.update');
     Route::get('customer-details/{id}', [CustomerControllerBackend::class, 'showCustomerDetails'])->name('customer-details');
     Route::get('customer-wishlist/{id}', [CustomerControllerBackend::class, 'showCustomerWishlist'])->name('customer-wishlist');
+    
+    Route::get('customer-care-request', [CustomerControllerBackend::class, 'customerCareRequestList'])->name('customer-care-request');
+    Route::delete('customer-care-request/destroy/{id}', [CustomerControllerBackend::class, 'customerCareRequestDelete'])->name('customer-care-request.destroy');
+
     
     Route::get('customer-orders/{id}', [CustomerControllerBackend::class, 'showCustomerOrdersList'])->name('customer-orders');
     Route::delete('manage-customer/delete/{id}', [CustomerControllerBackend::class, 'customerDelete'])->name('manage-customer.delete');

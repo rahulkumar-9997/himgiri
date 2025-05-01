@@ -75,6 +75,9 @@
                     <li class="nav-mb-item">
                         <a href="{{ route('contact-us')}}" class="mb-menu-link">Contact Us</a>
                     </li>
+                    <li class="nav-mb-item">
+                        <a href="{{ route('customer-care') }}" class="mb-menu-link">Customer Care</a>
+                    </li>
                 </ul>
             </div>
             <div class="mb-other-content">

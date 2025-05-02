@@ -4,57 +4,113 @@
 @section('keywords', 'BestCoolrs Store in Varanasi now goes Online')
 @section('main-content')
 @if (!empty($data['banner']) && $data['banner']->isNotEmpty())
-<section class="tf-slideshow slider-default home-slider">
-    <div class="swiper tf-sw-slideshow slider-effect-fade" data-preview="1" data-tablet="1" data-mobile="1"
-        data-centered="false" data-space="0" data-space-mb="0" data-loop="true" data-auto-play="true"
-        data-effect="fade">
-        <div class="swiper-wrapper">
-            @foreach ($data['banner'] as $banner)
-            <div class="swiper-slide">
-                <div class="slider-wrap">
-                    <a href="{{ $banner->link_desktop }}">
-                        <div class="image">
-                            <img src="{{ asset('images/banners/'.$banner->image_path_desktop) }}"
-                                data-src="{{ asset('images/banners/' . $banner->image_path_desktop) }}"
-                                alt="{{ $banner->title ?? 'slider' }}" class="lazyload">
-                        </div>
-                    </a>
-                    @if (!empty($banner->title))
-                    <div class="box-content">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="content-slider text-center">
-                                        <div class="box-title-slider">
-                                            <h2 class="heading display-xl-2 text-white fw-medium fade-item fade-item-1 font-2">
-                                                {{ $banner->title }}
-                                            </h2>
+    @if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipod|mobile)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))
+        <!--For mobile only-->
+        <section class="tf-slideshow slider-default home-slider">
+            <div class="swiper tf-sw-slideshow slider-effect-fade" data-preview="1" data-tablet="1" data-mobile="1"
+                data-centered="false" data-space="0" data-space-mb="0" data-loop="true" data-auto-play="true"
+                data-effect="fade">
+                <div class="swiper-wrapper">
+                    @foreach ($data['banner'] as $banner)
+                    <div class="swiper-slide">
+                        <div class="slider-wrap">
+                            <a href="{{ $banner->link_desktop }}">
+                                <div class="image">
+                                    <img src="{{ asset('images/banners/'.$banner->image_path_mobile) }}"
+                                        data-src="{{ asset('images/banners/' . $banner->image_path_mobile) }}"
+                                        alt="{{ $banner->title ?? 'slider' }}" class="lazyload">
+                                </div>
+                            </a>
+                            @if (!empty($banner->title))
+                            <div class="box-content">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="content-slider text-center">
+                                                <div class="box-title-slider">
+                                                    <h2 class="heading display-xl-2 text-white fw-medium fade-item fade-item-1 font-2">
+                                                        {{ $banner->title }}
+                                                    </h2>
+                                                </div>
+                                                @if (!empty($banner->link))
+                                                <div class="box-btn-slider fade-item fade-item-3">
+                                                    <a href="{{ $banner->link }}"
+                                                        class="tf-btn btn-large fw-normal btn-yellow font-2 rounded-0 animate-btn">
+                                                        Shop Collection <i class="icon icon-arr-right"></i>
+                                                    </a>
+                                                </div>
+                                                @endif
+                                            </div>
                                         </div>
-                                        @if (!empty($banner->link))
-                                        <div class="box-btn-slider fade-item fade-item-3">
-                                            <a href="{{ $banner->link }}"
-                                                class="tf-btn btn-large fw-normal btn-yellow font-2 rounded-0 animate-btn">
-                                                Shop Collection <i class="icon icon-arr-right"></i>
-                                            </a>
-                                        </div>
-                                        @endif
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </div>
-                    @endif
+                    @endforeach
+                </div>
+                <div class="wrap-pagination">
+                    <div class="container">
+                        <div class="sw-dots style-grey sw-pagination-slider justify-content-center"></div>
+                    </div>
                 </div>
             </div>
-            @endforeach
-        </div>
-        <div class="wrap-pagination">
-            <div class="container">
-                <div class="sw-dots style-grey sw-pagination-slider justify-content-center"></div>
+        </section>
+    @else
+        <!--For desktop only-->
+        <section class="tf-slideshow slider-default home-slider">
+            <div class="swiper tf-sw-slideshow slider-effect-fade" data-preview="1" data-tablet="1" data-mobile="1"
+                data-centered="false" data-space="0" data-space-mb="0" data-loop="true" data-auto-play="true"
+                data-effect="fade">
+                <div class="swiper-wrapper">
+                    @foreach ($data['banner'] as $banner)
+                    <div class="swiper-slide">
+                        <div class="slider-wrap">
+                            <a href="{{ $banner->link_desktop }}">
+                                <div class="image">
+                                    <img src="{{ asset('images/banners/'.$banner->image_path_desktop) }}"
+                                        data-src="{{ asset('images/banners/' . $banner->image_path_desktop) }}"
+                                        alt="{{ $banner->title ?? 'slider' }}" class="lazyload">
+                                </div>
+                            </a>
+                            @if (!empty($banner->title))
+                            <div class="box-content">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="content-slider text-center">
+                                                <div class="box-title-slider">
+                                                    <h2 class="heading display-xl-2 text-white fw-medium fade-item fade-item-1 font-2">
+                                                        {{ $banner->title }}
+                                                    </h2>
+                                                </div>
+                                                @if (!empty($banner->link))
+                                                <div class="box-btn-slider fade-item fade-item-3">
+                                                    <a href="{{ $banner->link }}"
+                                                        class="tf-btn btn-large fw-normal btn-yellow font-2 rounded-0 animate-btn">
+                                                        Shop Collection <i class="icon icon-arr-right"></i>
+                                                    </a>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                <div class="wrap-pagination">
+                    <div class="container">
+                        <div class="sw-dots style-grey sw-pagination-slider justify-content-center"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
+    @endif
 @endif
 
 @if (!empty($data['seriesValuesWithCategory']) && $data['seriesValuesWithCategory']->isNotEmpty())

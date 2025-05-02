@@ -20,19 +20,26 @@ class BannerController extends Controller
             <form method="POST" action="'.route('manage-banner.store').'" accept-charset="UTF-8" enctype="multipart/form-data" id="addNewBanner">
                 '.csrf_field().'
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="banner_title" class="form-label">Banner Title *</label>
+                            <label for="banner_title" class="form-label">Banner Title</label>
                             <input type="text" id="banner_title" name="banner_title" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="banner_image" class="form-label">Banner Image *</label>
+                            <label for="banner_image" class="form-label">Banner Image For Desktop *</label>
                             <input type="file" id="banner_image" name="banner_image" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="banner_image_mobile" class="form-label">Banner Image For Mobile *</label>
+                            <input type="file" id="banner_image_mobile" name="banner_image_mobile" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="banner_path" class="form-label">Banner Path</label>
                             <input type="text" id="banner_path" name="banner_path" class="form-control">
@@ -60,50 +67,75 @@ class BannerController extends Controller
         ]);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'banner_title' => 'nullable|string|max:255',
             'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:6144',
-            'banner_path' => 'required|url|max:255',
+            'banner_image_mobile' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:6144',
+            'banner_path' => 'nullable|url|max:255',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors(),
             ], 422);
         }
-        
-        $image = $request->file('banner_image');
-        $bannerTitle = $request->input('banner_title') ? Str::slug($request->input('banner_title'), '-') . '-himgiri' : 'default-banner-himgiri';
+
+        $bannerTitleSlug = $request->input('banner_title') 
+            ? Str::slug($request->input('banner_title'), '-') . '-himgiri' 
+            : 'default-banner-himgiri';
+
         $timestamp = round(microtime(true) * 1000);
-        $uniqueName = $bannerTitle . '-' . $timestamp . '.webp';  
         $imagePath = public_path('images/banners');
         if (!file_exists($imagePath)) {
             mkdir($imagePath, 0755, true);
         }
-        
-        $compressedImage = Image::make($image->getRealPath());
-        $compressedImage->resize(1200, 600, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-        $compressedImage->encode('webp', 80);
-        $compressedImage->save($imagePath . '/' . $uniqueName);
+
+        $desktopImageName = null;
+        $mobileImageName = null;
+
+        if ($request->hasFile('banner_image')) {
+            $desktopImage = $request->file('banner_image');
+            $desktopImageName = $bannerTitleSlug . '-desktop-' . $timestamp . '.webp';
+
+            $desktopImageResized = Image::make($desktopImage->getRealPath())
+                ->resize(1200, 600, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('webp', 80);
+            $desktopImageResized->save($imagePath . '/' . $desktopImageName);
+        } 
+
+        if ($request->hasFile('banner_image_mobile')) {
+            $mobileImage = $request->file('banner_image_mobile');
+            $mobileImageName = $bannerTitleSlug . '-mobile-' . $timestamp . '.webp';
+
+            $mobileImageResized = Image::make($mobileImage->getRealPath())
+                ->resize(600, 800, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('webp', 80);
+            $mobileImageResized->save($imagePath . '/' . $mobileImageName);
+        }
         $banner = Banner::create([
             'title' => $request->input('banner_title'),
-            'image_path_desktop' => $uniqueName,
+            'image_path_desktop' => $desktopImageName,
+            'image_path_mobile' => $mobileImageName,
             'link_desktop' => $request->input('banner_path'),
             'status' => true,
         ]);
-        
+
         return response()->json([
             'status' => 'success',
             'message' => 'Banner created successfully!',
             'data' => $banner,
         ]);
-        
     }
+
 
     public function edit(Request $request, $id){
         $blogCategoryId = $request->input('blogCategoryId'); 
@@ -114,20 +146,27 @@ class BannerController extends Controller
                 '.csrf_field().'
                 <input type="hidden" name="_method" value="PUT">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="banner_title" class="form-label">Banner Title *</label>
+                            <label for="banner_title" class="form-label">Banner Title</label>
                             <input type="text" id="banner_title" name="banner_title" class="form-control" value="'.$banner_row->title.'">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="banner_image" class="form-label">Banner Image *</label>
                             <input type="file" id="banner_image" name="banner_image" class="form-control">
-                            <img src="'.asset($banner_row->image_path_desktop).'" class="img-thumbnail" style="width: 70px; height: 70px;" alt="'.$banner_row->title.'">
+                            <img src="'.asset('images/banners/'.$banner_row->image_path_desktop).'" class="img-thumbnail" style="width: 150px; height: 70px;" alt="'.$banner_row->title.'">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="banner_image_mobile" class="form-label">Banner Image Mobile *</label>
+                            <input type="file" id="banner_image_mobile" name="banner_image_mobile" class="form-control">
+                            <img src="'.asset('images/banners/'.$banner_row->image_path_mobile).'" class="img-thumbnail" style="width: 150px; height: 70px;" alt="'.$banner_row->title.'">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="banner_path" class="form-label">Banner Path</label>
                             <input type="text" id="banner_path" name="banner_path" class="form-control" value="'.$banner_row->link_desktop.'">
@@ -155,10 +194,12 @@ class BannerController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $validator = Validator::make($request->all(), [
-            'banner_title' => 'required|string|max:255',
+            'banner_title' => 'nullable|string|max:255',
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:6144',
+            'banner_image_mobile' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:6144',
             'banner_path' => 'required|url|max:255',
         ]);
 
@@ -170,37 +211,57 @@ class BannerController extends Controller
         }
 
         $banner = Banner::findOrFail($id);
-        $bannerTitle = Str::slug($request->input('banner_title'), '-');
+        $bannerTitleSlug = Str::slug($request->input('banner_title'), '-');
         $timestamp = round(microtime(true) * 1000);
+        $imagePath = public_path('images/banners');
+
+        if (!file_exists($imagePath)) {
+            mkdir($imagePath, 0755, true);
+        }
 
         if ($request->hasFile('banner_image')) {
-            if ($banner->image_path_desktop && file_exists(public_path($banner->image_path_desktop))) {
-                unlink(public_path($banner->image_path_desktop));
+            if ($banner->image_path_desktop && file_exists($imagePath . '/' . $banner->image_path_desktop)) {
+                unlink($imagePath . '/' . $banner->image_path_desktop);
             }
 
-            $image = $request->file('banner_image');
-            $uniqueName = $bannerTitle . '-' . $timestamp . '.webp';
-            $imagePath = public_path('images/banners');
+            $desktopImage = $request->file('banner_image');
+            $desktopImageName = $bannerTitleSlug . '-desktop-' . $timestamp . '.webp';
 
-            if (!file_exists($imagePath)) {
-                mkdir($imagePath, 0755, true);
-            }
+            Image::make($desktopImage->getRealPath())
+                ->resize(1200, 600, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('webp', 80)
+                ->save($imagePath . '/' . $desktopImageName);
 
-            $compressedImage = Image::make($image->getRealPath());
-            $compressedImage->resize(1200, 600, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $compressedImage->encode('webp', 80);
-            $compressedImage->save($imagePath . '/' . $uniqueName);
-
-            $banner->image_path_desktop = $uniqueName;
+            $banner->image_path_desktop = $desktopImageName;
         }
-        $banner->update([
-            'title' => $request->input('banner_title'),
-            'link_desktop' => $request->input('banner_path'),
-            'status' => true,
-        ]);
+
+        if ($request->hasFile('banner_image_mobile')) {
+            if ($banner->image_path_mobile && file_exists($imagePath . '/' . $banner->image_path_mobile)) {
+                unlink($imagePath . '/' . $banner->image_path_mobile);
+            }
+
+            $mobileImage = $request->file('banner_image_mobile');
+            $mobileImageName = $bannerTitleSlug . '-mobile-' . $timestamp . '.webp';
+
+            Image::make($mobileImage->getRealPath())
+                ->resize(600, 800, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('webp', 80)
+                ->save($imagePath . '/' . $mobileImageName);
+
+            $banner->image_path_mobile = $mobileImageName;
+        }
+
+        // Update other fields
+        $banner->title = $request->input('banner_title');
+        $banner->link_desktop = $request->input('banner_path');
+        $banner->status = true;
+        $banner->save();
 
         return response()->json([
             'status' => 'success',
@@ -209,13 +270,22 @@ class BannerController extends Controller
         ]);
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $banner = Banner::findOrFail($id);
-        if ($banner->image_path_desktop && file_exists(public_path($banner->image_path_desktop))) {
-            unlink(public_path($banner->image_path_desktop)); 
+        $imagePath = public_path('images/banners');
+        if ($banner->image_path_desktop && file_exists($imagePath . '/' . $banner->image_path_desktop)) {
+            unlink($imagePath . '/' . $banner->image_path_desktop);
         }
+        /* Delete mobile image if exists */
+        if ($banner->image_path_mobile && file_exists($imagePath . '/' . $banner->image_path_mobile)) {
+            unlink($imagePath . '/' . $banner->image_path_mobile);
+        }
+
+        /* Delete the banner record */
         $banner->delete();
-        return redirect()->back()->with('success', 'Banner and its image deleted successfully!');           
+        return redirect()->back()->with('success', 'Banner and its images deleted successfully!');
     }
+
 
 }

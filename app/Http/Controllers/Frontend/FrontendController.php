@@ -34,7 +34,7 @@ class FrontendController extends Controller
 {
     public function home()
     {
-        $data['banner'] = Banner::latest('id')->get(['id', 'image_path_desktop', 'link_desktop', 'title']);
+        $data['banner'] = Banner::latest('id')->get(['id', 'image_path_desktop', 'link_desktop', 'title', 'image_path_mobile']);
         $data['primary_category'] = PrimaryCategory::where('status', 1)
         ->orderBy('title')
         ->get(['id', 'title', 'link']);

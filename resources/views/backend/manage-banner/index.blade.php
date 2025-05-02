@@ -36,7 +36,8 @@
                               <tr>
                                  <th>Sr. No.</th>
                                  <th>Name</th>
-                                 <th>Banner Image</th>
+                                 <th>Banner Image Desktop</th>
+                                 <th>Banner Image Mobile</th>
                                  <th>Action</th>
                               </tr>
                         </thead>
@@ -50,6 +51,9 @@
                                     <td>{{ $banner_row->title }}</td>
                                     <td>
                                         <img src="{{ asset('images/banners/' . $banner_row->image_path_desktop) }}" class="img-thumbnail" style="width: 150px; height: 70px;" alt="{{ $banner_row->title }}">
+                                    </td>
+                                    <td>
+                                        <img src="{{ asset('images/banners/' . $banner_row->image_path_mobile) }}" class="img-thumbnail" style="width: 80px; height: 70px;" alt="{{ $banner_row->title }}">
                                     </td>
                                     <td>
                                           <div class="d-flex gap-2">

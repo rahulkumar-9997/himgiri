@@ -14,6 +14,7 @@
 			@include('frontend.layouts.search-bar')
 		</div>
 		@include('frontend.layouts.mobile-menu')
+		@include('frontend.layouts.product-enquiry-modal')
 		@include('frontend.layouts.footerjs')
 		@stack('scripts')
 	</body>

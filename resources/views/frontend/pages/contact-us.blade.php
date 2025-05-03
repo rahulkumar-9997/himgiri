@@ -85,23 +85,23 @@
                                 <div class="cols">
                                     <fieldset>
                                         <label for="username">Your name*</label>
-                                        <input id="name" class="radius-8" type="text" name="name">
+                                        <input id="name" class="radius-8 form-control" type="text" name="name">
                                     </fieldset>
                                     <fieldset>
                                         <label for="email">Your phone no.*</label>
-                                        <input id="phone_number" class="radius-8" type="text" name="phone_number" maxlength="10">
+                                        <input id="phone_number" class="radius-8 form-control" type="text" name="phone_number" maxlength="10">
                                     </fieldset>
                                 </div>
                                 <div class="cols">
                                     <fieldset>
                                         <label for="email">Your email</label>
-                                        <input id="email" class="radius-8" type="email" name="email">
+                                        <input id="email" class="radius-8 form-control" type="email" name="email">
                                     </fieldset>
                                 </div>
                                 <div class="cols">
                                     <fieldset class="textarea">
                                         <label for="mess">Message</label>
-                                        <textarea id="mess" class="radius-8" cols="60" name="message" rows="3"></textarea>
+                                        <textarea id="mess" class="radius-8 form-control" cols="60" name="message" rows="3"></textarea>
                                     </fieldset>
                                 </div>
                                 <div class="button-submit">

@@ -35,8 +35,8 @@
                                     <fieldset>
                                         <label for="category">Select Category *</label>
                                         @if($category->isNotEmpty())
-                                        <div class="tf-select select-square">
-                                            <select name="category" id="category">
+                                        <div class="tf-select select-square ">
+                                            <select name="category" id="category" class="form-control">
                                                 <option value="">Select Category </option>
                                                 @foreach ($category as $categoryRow)
                                                 <option value="{{ $categoryRow->id }}">{{ $categoryRow->title }}</option>
@@ -50,7 +50,7 @@
                                     <fieldset>
                                         <label for="model">Select Model *</label>
                                         <div class="tf-select select-square">
-                                            <select name="model" id="model">
+                                            <select name="model" id="model" class="form-control">
                                                 
                                             </select>
                                         </div>
@@ -59,27 +59,27 @@
                                 <div class="cols">
                                     <fieldset>
                                         <label for="name">Name *</label>
-                                        <input id="name" class="radius-8" type="text" name="name">
+                                        <input id="name" class="radius-8 form-control" type="text" name="name">
                                     </fieldset>
                                     <fieldset>
                                         <label for="email">Your email</label>
-                                        <input id="email" class="radius-8" type="email" name="email">
+                                        <input id="email" class="radius-8 form-control" type="email" name="email">
                                     </fieldset>
                                 </div>
                                 <div class="cols">
                                     <fieldset>
                                         <label for="phone_number">Phone No.*</label>
-                                        <input id="phone_number" class="radius-8" type="text" name="phone_number" maxlength="10">
+                                        <input id="phone_number" class="radius-8 form-control" type="text" name="phone_number" maxlength="10">
                                     </fieldset>
                                     <fieldset>
                                         <label for="product_image">Product Image (File) *</label>
-                                        <input id="product_image" class="radius-8" type="file" name="product_image">
+                                        <input id="product_image" class="radius-8 form-control" type="file" name="product_image">
                                     </fieldset>
                                 </div>
                                 <div class="cols">
                                     <fieldset class="textarea">
                                         <label for="mess">Message</label>
-                                        <textarea id="mess" class="radius-8" cols="60" name="message" rows="3"></textarea>
+                                        <textarea id="mess" class="radius-8 form-control" cols="60" name="message" rows="3"></textarea>
                                     </fieldset>
                                 </div>
                                 <div class="button-submit">

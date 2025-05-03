@@ -90,6 +90,8 @@ Route::middleware([TrackVisitor::class])->group(function () {
     Route::get('customer-care', [FrontendController::class, 'customerCare'])->name('customer-care');
     Route::post('/get-models-by-category', [FrontendController::class, 'getModelsByCategory'])->name('get.models.by.category');
     Route::post('customer-care', [FrontendController::class, 'customerCareDataStore'])->name('customer-care.store');
+    Route::post('product-enquiry-model', [FrontendController::class, 'productEnquiryModelForm'])->name('product-enquiry-model');
+    Route::post('product-enquiry-model-submit', [FrontendController::class, 'productEnquiryModelFormSubmit'])->name('product-enquiry-model.submit');
 
 });
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);

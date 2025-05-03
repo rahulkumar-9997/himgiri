@@ -340,23 +340,23 @@
   };
 
   /* Auto Popup
-  ------------------------------------------------------------------------------------- */
-  var autoPopup = function () {
-    if ($(".auto-popup").length > 0) {
-        let pageKey = "showPopup_" + window.location.pathname; 
-        let showPopup = sessionStorage.getItem(pageKey);
+  // ------------------------------------------------------------------------------------- */
+  // var autoPopup = function () {
+  //   if ($(".auto-popup").length > 0) {
+  //       let pageKey = "showPopup_" + window.location.pathname; 
+  //       let showPopup = sessionStorage.getItem(pageKey);
 
-        if (!JSON.parse(showPopup)) {
-            setTimeout(function () {
-                $(".auto-popup").modal("show");
-            }, 3000);
-        }
+  //       if (!JSON.parse(showPopup)) {
+  //           setTimeout(function () {
+  //               $(".auto-popup").modal("show");
+  //           }, 3000);
+  //       }
         
-        $(".btn-hide-popup").on("click", function () {
-            sessionStorage.setItem(pageKey, true); 
-        });
-    }
-  };
+  //       $(".btn-hide-popup").on("click", function () {
+  //           sessionStorage.setItem(pageKey, true); 
+  //       });
+  //   }
+  // };
 
   /* Handle Progress
   ------------------------------------------------------------------------------------- */
@@ -1147,7 +1147,7 @@
     clickModalSecond();
     estimateShipping();
     headerSticky();
-    autoPopup();
+    // autoPopup();
     handleProgress();
     totalPriceVariant();
     initBundleFunctionality();

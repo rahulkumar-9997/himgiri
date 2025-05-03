@@ -176,9 +176,21 @@ $meta_description = 'Himgiri Coolers';
                                     <a href="#shoppingCart" data-bs-toggle="offcanvas"
                                         class="tf-btn hover-primary btn-add-to-cart">Add to cart</a>
                                 </div>-->
-                                <a href="#" class="tf-btn btn-primary w-100 animate-btn">
+                                @php
+                                    $firstImage = $data['product_details']->images->first();
+                                    $imagePath = $firstImage && !empty($firstImage->image_path)
+                                        ? asset('images/product/large/' . $firstImage->image_path)
+                                        : asset('images/product/default.jpg'); // your default image path
+                                @endphp
+                                <button 
+                                class="tf-btn btn-primary w-100 animate-btn product-enquiry"
+                                data-pid="{{ $data['product_details']->id }}"
+                                data-ptitle="{{ $data['product_details']->title }}"
+                                data-pimg="{{ $imagePath }}"
+                                data-url="{{ route('product-enquiry-model') }}"
+                                >
                                     Enquiry Now
-                                </a>
+                                </button>
 
                             </div>
                             <!--<div class="tf-product-info-extra-link">

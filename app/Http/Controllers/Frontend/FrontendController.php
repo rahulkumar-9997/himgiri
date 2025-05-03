@@ -29,15 +29,15 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Counter;
 use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Exception;
 class FrontendController extends Controller
 {
     public function home()
     {
         $data['banner'] = Banner::latest('id')->get(['id', 'image_path_desktop', 'link_desktop', 'title', 'image_path_mobile']);
         $data['primary_category'] = PrimaryCategory::where('status', 1)
-        ->orderBy('title')
-        ->get(['id', 'title', 'link']);
+            ->orderBy('title')
+            ->get(['id', 'title', 'link']);
         [$seriesAttribute, $modelAttribute, $airCoolerCategory, $almirahCategory] = [
             Attribute::where('title', 'Series')->first(),
             Attribute::where('title', 'Model')->first(),
@@ -95,16 +95,16 @@ class FrontendController extends Controller
                             ->orderBy('id');
                     }
                 ])
-                ->leftJoin('inventories', function ($join) {
-                    $join->on('products.id', '=', 'inventories.product_id')
-                        ->whereRaw('inventories.mrp = (SELECT MIN(mrp) FROM inventories WHERE product_id = products.id)');
-                })
-                ->select('products.*', 'inventories.mrp', 'inventories.offer_rate', 'inventories.purchase_rate', 'inventories.sku');
+                    ->leftJoin('inventories', function ($join) {
+                        $join->on('products.id', '=', 'inventories.product_id')
+                            ->whereRaw('inventories.mrp = (SELECT MIN(mrp) FROM inventories WHERE product_id = products.id)');
+                    })
+                    ->select('products.*', 'inventories.mrp', 'inventories.offer_rate', 'inventories.purchase_rate', 'inventories.sku');
             }
         ])
-        ->where('slug', $slug)
-        ->firstOrFail();
-       
+            ->where('slug', $slug)
+            ->firstOrFail();
+
         DB::disconnect();
         return view('frontend.pages.blog-details', compact('blog'));
     }
@@ -197,7 +197,7 @@ class FrontendController extends Controller
 
             if ($request->hasFile('product_image')) {
                 $categoryName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($category->title));
-                $modelName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($request->model)); 
+                $modelName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($request->model));
                 $image = $request->file('product_image');
 
                 $baseFilename = $categoryName . '-' . $modelName . '-' . Str::random(5);
@@ -226,17 +226,17 @@ class FrontendController extends Controller
                 ]);
 
                 $pdf = Pdf::loadView('frontend.emails.customer_care_pdf', ['careRequest' => $careRequest]);
-                $pdfFilename = $baseFilename.'.pdf';
+                $pdfFilename = $baseFilename . '.pdf';
                 $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFilename);
                 $pdf->save($pdfPath);
 
                 Mail::send('frontend.emails.customer_care_ticket', ['careRequest' => $careRequest], function ($message) use ($careRequest, $pdfPath) {
                     $message->to('rahulkumarmaurya464@gmail.com')
-                            ->subject('New Customer Care Ticket: ' . $careRequest->ticket_id)
-                            ->attach($pdfPath, [
-                                'as' => 'CustomerCareTicket.pdf',
-                                'mime' => 'application/pdf',
-                            ]);
+                        ->subject('New Customer Care Ticket: ' . $careRequest->ticket_id)
+                        ->attach($pdfPath, [
+                            'as' => 'CustomerCareTicket.pdf',
+                            'mime' => 'application/pdf',
+                        ]);
                 });
                 return response()->json([
                     'status' => 'success',
@@ -248,7 +248,6 @@ class FrontendController extends Controller
                 'status' => 'error',
                 'message' => 'Product image is required.',
             ], 400);
-
         } catch (\Exception $e) {
             Log::error('Customer Care Request Failed: ' . $e->getMessage());
 
@@ -328,27 +327,27 @@ class FrontendController extends Controller
         }
         /*Fetch attributes with values for the filter list (mapped attributes and counts)*/
         $attributes_with_values_for_filter_list = $category->attributes()
-        ->with(['AttributesValues' => function ($query) use ($category, $attribute_top, $attributeValue) {
-            $query->whereHas('map_attributes_value_to_categories', function ($q) use ($category) {
-                $q->where('category_id', $category->id);
-            })
-                ->withCount(['productAttributesValues' => function ($q) use ($category, $attribute_top, $attributeValue) {
-                    // Calculate counts based on the filtered products query
-                    $q->whereHas('product', function ($q) use ($category, $attribute_top, $attributeValue) {
-                        $q->where('category_id', $category->id)
-                            ->whereHas('attributes', function ($query) use ($attribute_top, $attributeValue) {
-                                $query->where('attributes_id', $attribute_top->id)
-                                    ->whereHas('values', function ($q) use ($attributeValue) {
-                                        $q->where('attributes_value_id', $attributeValue->id);
-                                    });
-                            });
-                    });
-                }])
-                ->having('product_attributes_values_count', '>', 0)
-                ->orderBy('name');
-        }])
-        ->orderBy('title')
-        ->get();
+            ->with(['AttributesValues' => function ($query) use ($category, $attribute_top, $attributeValue) {
+                $query->whereHas('map_attributes_value_to_categories', function ($q) use ($category) {
+                    $q->where('category_id', $category->id);
+                })
+                    ->withCount(['productAttributesValues' => function ($q) use ($category, $attribute_top, $attributeValue) {
+                        // Calculate counts based on the filtered products query
+                        $q->whereHas('product', function ($q) use ($category, $attribute_top, $attributeValue) {
+                            $q->where('category_id', $category->id)
+                                ->whereHas('attributes', function ($query) use ($attribute_top, $attributeValue) {
+                                    $query->where('attributes_id', $attribute_top->id)
+                                        ->whereHas('values', function ($q) use ($attributeValue) {
+                                            $q->where('attributes_value_id', $attributeValue->id);
+                                        });
+                                });
+                        });
+                    }])
+                    ->having('product_attributes_values_count', '>', 0)
+                    ->orderBy('name');
+            }])
+            ->orderBy('title')
+            ->get();
 
 
         $products = $productsQuery
@@ -391,14 +390,16 @@ class FrontendController extends Controller
         }
         DB::disconnect();
         //return response()->json($products);
-        return view('frontend.pages.collections',
-        compact(
-            'products',
-            'attributeValue',
-            'category',
-            'primary_category',
-            'attributes_with_values_for_filter_list',
-        ));
+        return view(
+            'frontend.pages.collections',
+            compact(
+                'products',
+                'attributeValue',
+                'category',
+                'primary_category',
+                'attributes_with_values_for_filter_list',
+            )
+        );
     }
 
     public function showCategoryProduct(Request $request, $categorySlug)
@@ -474,7 +475,7 @@ class FrontendController extends Controller
             // Fetching products with the necessary relationships
             $products = $productsQuery->with([
                 'category',
-                'images' => function($query) {
+                'images' => function ($query) {
                     $query->select('id', 'product_id', 'image_path')
                         ->orderBy('sort_order');
                 },
@@ -506,7 +507,7 @@ class FrontendController extends Controller
                     ]);
                 }
             }
-			DB::disconnect();
+            DB::disconnect();
             //return response()->json($primary_category);
             return view('frontend.pages.product-catalog-category', compact('products', 'category', 'attributes_with_values_for_filter_list', 'primary_category'));
         } catch (\Exception $e) {
@@ -521,10 +522,10 @@ class FrontendController extends Controller
         $attributeValue = Attribute_values::where('slug', $attributes_value_slug)->first();
         /*First get the product and increment visitor count in one query*/
         $product = Product::where('slug', $slug)
-        ->firstOrFail()
-        ->increment('visitor_count');
+            ->firstOrFail()
+            ->increment('visitor_count');
         /*First get the product and increment visitor count in one query*/
-       
+
         if (!$attributeValue) {
             $attributeValue = '';
         }
@@ -546,9 +547,9 @@ class FrontendController extends Controller
             ->select('products.*', 'inventories.mrp', 'inventories.offer_rate', 'inventories.purchase_rate', 'inventories.sku', 'inventories.stock_quantity')
             ->where('products.slug', $slug)
             ->firstOrFail();
-        
+
         $categoryId = $data['product_details']->category->id;
-        
+
         $data['related_products'] = Product::with([
             'images' => function ($query) {
                 $query->orderBy('sort_order');
@@ -576,18 +577,133 @@ class FrontendController extends Controller
             ->inRandomOrder()
             ->limit(10)
             ->get();
-			DB::disconnect();
+        DB::disconnect();
         /**Related product display */
         //return response()->json($data['related_products']);
         return view('frontend.pages.products', compact('data'));
     }
 
-    public function privacyPolicy(){
+    public function privacyPolicy()
+    {
         return view('frontend.pages.privacy-policy');
     }
 
-    public function termsAndConditions(){
+    public function termsAndConditions()
+    {
         return view('frontend.pages.terms-and-conditions');
     }
-    
+
+    public function productEnquiryModelForm(Request $request)
+    {
+        $product_id = $request->input('product_id');
+        $product_image_path = $request->input('product_image_path');
+        $product_title = $request->input('product_title');
+        $form = '
+            <div class="modal-top">
+                <div class="p-en-p-name text-center mb-2 mt-2">
+                    <h5 class="title">' . $product_title . '</h5>
+                </div>
+                <div class="product-image-modal">
+                    <img class="lazyload" data-src="' . $product_image_path . '"
+                    src="' . $product_image_path . '" alt="images">
+                </div>
+                <span class="icon icon-close btn-hide-popup" data-bs-dismiss="modal"></span>
+            </div>
+            <div class="modal-bottom newsletter">
+                <div class="product-enquiry-form">
+                    <form action="'.route('product-enquiry-model.submit').'" accept-charset="UTF-8" enctype="multipart/form-data" id="productEnquiryForm" class="form-default">
+                        '.csrf_field().'
+                        <input type="hidden" value="'.$product_title.'" name="product_name">
+                        <input type="hidden" value="'.$product_image_path.'" name="image_path">
+                        <div class="wrap">
+                            <div class="cols">
+                                <fieldset>
+                                    <input id="enquiry_name" class="radius-8 form-control" type="text" name="enquiry_name" placeholder="Enter your name *">
+                                </fieldset>
+                            </div>
+                            <div class="cols">
+                                <fieldset>
+                                    <input id="email" class="radius-8 form-control" type="email" name="email" placeholder="Enter your email" >
+                                </fieldset>
+                            </div>
+                            <div class="cols">
+                                <fieldset>
+                                    <input id="phone_no" class="radius-8 form-control" type="text" name="phone_no" placeholder="Enter your phone/mobile No. *" maxlength="10" pattern="[0-9+\-\s()]+">
+                                </fieldset>
+                            </div>
+                            <div class="cols">
+                                <fieldset class="textarea">
+                                    <textarea id="enquiry_message" class="radius-8 form-control" cols="20" name="enquiry_message" rows="2" placeholder="Enter message.."></textarea>
+                                </fieldset>
+                            </div>
+                            <div class="button-submit">
+                                <button class="tf-btn animate-btn" type="submit">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>  
+            </div>
+        ';
+        return response()->json([
+            'message' => 'Form created successfully',
+            'form' => $form,
+        ]);
+    }
+
+    public function productEnquiryModelFormSubmit(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'product_name' => 'required|string|max:255',
+                'image_path' => 'required|string|max:255',
+                'enquiry_name' => 'required|string|max:100',
+                'email' => 'nullable|email|max:150',
+                'phone_no' => [
+                    'required',
+                    'string',
+                    'max:20',
+                    'regex:/^[0-9+\-\s()]+$/'
+                ],
+                'enquiry_message' => 'nullable|string|max:1000',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            $data = $validator->validated();
+            $imagePath = public_path($data['image_path']);
+            $attachment = null;
+            if (file_exists($imagePath)) {
+                $attachment = $imagePath;
+            }
+
+            Mail::send('frontend.emails.product_enquiry', $data, function ($mail) use ($data, $attachment) {
+                $mail->to('rahulkumarmaurya464@gmail.com', 'Admin')
+                    ->subject('Product Enquiry: ' . $data['product_name']);
+                
+                if ($attachment) {
+                    $mail->attach($attachment); 
+                }
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Enquiry submitted successfully. Our team will contact you shortly.',
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
 }

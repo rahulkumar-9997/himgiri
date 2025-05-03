@@ -68,9 +68,9 @@ class SearchController extends Controller
                                     <img class="img-product lazyload"
                                         data-src="' . $image1 . '"
                                         src="' . $image1 . '" alt="' . $product->title . '" loading="lazy">
-                                    <img class="img-hover lazyload"
+                                    <!--<img class="img-hover lazyload"
                                         data-src="' . $image2 . '"
-                                        src="' . $image2 . '" alt="' . $product->title . '" loading="lazy">
+                                        src="' . $image2 . '" alt="' . $product->title . '" loading="lazy">-->
                                 </a>
                             </div>
                             <div class="card-product-info">
@@ -80,10 +80,10 @@ class SearchController extends Controller
                 ]) . '" class="name-product link fw-medium text-md">
                                     ' . $product->title . '
                                 </a>';
-                if ($product->offer_rate) {
+                if ($product->mrp) {
                     $searchModal .= '
-                                    <span class="price-new text-primary">Rs. ' . $product->offer_rate . '</span>
-                                    <span class="price-old">Rs. ' . $product->mrp . '</span>
+                                    <span class="price-new text-primary">Rs. ' . $product->mrp . '</span>
+                                    <!--<span class="price-old">Rs. ' . $product->mrp . '</span>-->
                                     ';
                 } else {
                     $searchModal .= '

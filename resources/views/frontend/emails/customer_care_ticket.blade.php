@@ -10,6 +10,7 @@
     <p><strong>Ticket ID:</strong> {{ $careRequest->ticket_id }}</p>
     <p><strong>Category:</strong> {{ $careRequest->category_name }}</p>
     <p><strong>Model:</strong> {{ $careRequest->model_name }}</p>
+    <p><strong>Problem Type:</strong> {{ $careRequest->problem_type }}</p>
     <p><strong>Name:</strong> {{ $careRequest->name }}</p>
     <p><strong>Email:</strong> {{ $careRequest->email ?? '-' }}</p>
     <p><strong>Phone Number:</strong> {{ $careRequest->phone_number }}</p>

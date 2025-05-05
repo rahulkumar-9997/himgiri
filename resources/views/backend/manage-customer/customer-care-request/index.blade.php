@@ -48,6 +48,14 @@
                                         @if(!empty($customer_care_request_row->model_name))
                                         <p style="margin-bottom: 5px;"><strong>Model :</strong> {{ $customer_care_request_row->model_name }}</p>
                                         @endif
+                                       
+                                    <p style="margin-bottom: 5px;"><strong>Problem Type :</strong> 
+                                        @if(!empty($customer_care_request_row->problem_type))
+                                            {{ $customer_care_request_row->problem_type }}
+                                        @else
+                                            No problem type specified.
+                                        @endif
+                                    </p>
                                     </td>
 
                                     <td>

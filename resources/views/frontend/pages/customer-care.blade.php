@@ -55,6 +55,19 @@
                                             </select>
                                         </div>
                                     </fieldset>
+                                    <fieldset>
+                                        <label for="problem_type">Problem Type *</label>
+                                        <div class="tf-select select-square">
+                                            <select name="problem_type" id="problem_type" class="form-control">
+                                                <option value="">Select Problem Type</option>
+                                                <option value="Pump Problem">Pump Problem</option>
+                                                <option value="Motor Problem">Motor Problem</option>
+                                                <option value="Connection Problem">Connection Problem</option>
+                                                <option value="Body Problem">Body Problem</option>
+                                                <option value="Any other problem">Any other problem</option>
+                                            </select>
+                                        </div>
+                                    </fieldset>
                                 </div>
                                 <div class="cols">
                                     <fieldset>

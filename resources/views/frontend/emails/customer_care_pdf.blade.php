@@ -88,6 +88,10 @@
             <td>{{ $careRequest->model_name }}</td>
         </tr>
         <tr>
+            <td><strong>Problem Type</strong></td>
+            <td>{{ $careRequest->problem_type }}</td>
+        </tr>
+        <tr>
             <td><strong>Customer Name</strong></td>
             <td>{{ $careRequest->name }}</td>
         </tr>

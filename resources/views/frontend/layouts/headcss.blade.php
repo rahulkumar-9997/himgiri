@@ -18,4 +18,12 @@
 <!-- Favicon and Touch Icons  -->
 <link rel="shortcut icon" href="{{asset('frontend/assets/himgiri-img/logo/fav-icon.png')}}">
 <link rel="apple-touch-icon-precomposed" href="{{asset('frontend/assets/himgiri-img/logo/fav-icon.png')}}">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NRRR0WX8VP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NRRR0WX8VP');
+</script>
 

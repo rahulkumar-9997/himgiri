@@ -16,7 +16,8 @@ class CustomerCareRequest extends Model
         'email',
         'phone_number',
         'product_image',
-        'message'
+        'message',
+        'problem_type'
     ];
     
 }

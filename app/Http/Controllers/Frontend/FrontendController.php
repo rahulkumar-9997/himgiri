@@ -176,6 +176,7 @@ class FrontendController extends Controller
             'category' => 'required|integer|exists:category,id',
             'model' => 'required|string|max:255',
             'name' => 'required|string|max:255',
+            'problem_type' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone_number' => 'required|string|size:10',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:6144',
@@ -223,6 +224,7 @@ class FrontendController extends Controller
                     'phone_number' => $request->phone_number,
                     'product_image' => $imageFilename,
                     'message' => $request->message,
+                    'problem_type' => $request->problem_type,
                 ]);
 
                 $pdf = Pdf::loadView('frontend.emails.customer_care_pdf', ['careRequest' => $careRequest]);

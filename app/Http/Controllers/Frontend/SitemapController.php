@@ -147,10 +147,12 @@ class SitemapController extends Controller
         
         /**Other page */
         $pages = [
-            ['url' => url('contact-us'), 'priority' => '0.6'],
+            ['url' => url('contact-us'), 'priority' => '0.5'],
             ['url' => url('blog'), 'priority' => '0.6'],
-            ['url' => url('about-us'), 'priority' => '0.6'],
-            ['url' => url('customer-care'), 'priority' => '0.5'],
+            ['url' => url('about-us'), 'priority' => '0.7'],
+            ['url' => url('customer-care'), 'priority' => '0.8'],
+            ['url' => url('privacy-policy'), 'priority' => '0.9'],
+            ['url' => url('terms-and-conditions'), 'priority' => '0.10'],
             // ['url' => url('checkout'), 'priority' => '0.8'],
             // ['url' => url('order'), 'priority' => '0.8'],
             // ['url' => url('wishlist'), 'priority' => '0.8'],

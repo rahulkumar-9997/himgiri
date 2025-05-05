@@ -178,7 +178,7 @@ class FrontendController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone_number' => 'required|string|size:10',
-            'product_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'product_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:6144',
             'message' => 'nullable|string',
         ]);
 

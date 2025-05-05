@@ -133,6 +133,81 @@ class SearchController extends Controller
         return response()->json(['suggestions' => $suggestions]);
     }
 
+    public function searchSuggestions_like_flipkart_remove(Request $request)
+    {
+        $query = $request->get('query');
+        if (strlen($query) < 2) {
+            return response()->json(['suggestions' => []]);
+        }
+
+        $searchTerms = explode(' ', $query);
+        $booleanQuery = '+' . implode(' +', $searchTerms);
+
+        // Search products
+        $products = Product::whereRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE)", [$booleanQuery])
+            ->orWhere(function ($q) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    $q->where('title', 'like', '%' . $term . '%');
+                }
+            })
+            ->with('firstImage')
+            ->limit(5)
+            ->get(['id', 'title', 'slug', 'product_price', 'product_sale_price']);
+
+        // Search categories
+        $categories = Category::where(function ($q) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    $q->where('title', 'like', '%' . $term . '%');
+                }
+            })
+            ->limit(3)
+            ->get(['id', 'title', 'slug', 'image']);
+
+       
+        $suggestions = [];
+
+        // Add products
+        foreach ($products as $product) {
+            $suggestions[] = [
+                'type' => 'product',
+                'title' => $product->title,
+                'image' => $product->firstImage ? asset('images/product/icon/' . $product->firstImage->image_path) : null,
+                'price' => $product->product_sale_price ?? $product->product_price,
+                //'url' => route('product.detail', $product->slug),
+                'category' => 'Products'
+            ];
+        }
+
+        // Add categories
+        foreach ($categories as $category) {
+            $suggestions[] = [
+                'type' => 'category',
+                'title' => $category->title,
+                'image' => $category->image ? asset('images/category/' . $category->image) : null,
+                //'url' => route('category.products', $category->slug),
+                'category' => 'Categories'
+            ];
+        }
+
+        
+
+        // Add trending searches (you can customize this)
+        if (count($suggestions) < 5) {
+            $trending = Product::popular()->limit(5 - count($suggestions))->get();
+            foreach ($trending as $product) {
+                $suggestions[] = [
+                    'type' => 'trending',
+                    'title' => $product->title,
+                    'image' => $product->firstImage ? asset('images/product/icon/' . $product->firstImage->image_path) : null,
+                   // 'url' => route('collections', $product->slug),
+                    'category' => 'Trending'
+                ];
+            }
+        }
+
+        return response()->json(['suggestions' => $suggestions]);
+    }
+
 
     public function searchListProduct(Request $request)
     {

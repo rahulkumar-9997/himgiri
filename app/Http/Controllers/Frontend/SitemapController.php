@@ -66,16 +66,16 @@ class SitemapController extends Controller
 
         if ($blogCategories->isNotEmpty()) {
             foreach ($blogCategories as $blog_category) {
-                $sitemap .= '<url>';
-                $sitemap .= '<loc>' . url('/blogs/list/' . $blog_category->slug) . '</loc>';
-                $sitemap .= '<lastmod>' . $blog_category->updated_at->toAtomString() . '</lastmod>';
-                $sitemap .= '<changefreq>monthly</changefreq>';
-                $sitemap .= '<priority>0.6</priority>';
-                $sitemap .= '</url>';
-
+                // $sitemap .= '<url>';
+                // $sitemap .= '<loc>' . route('blog', ['category' => $blog_category->slug]) . '</loc>';
+                // $sitemap .= '<lastmod>' . $blog_category->updated_at->toAtomString() . '</lastmod>';
+                // $sitemap .= '<changefreq>monthly</changefreq>';
+                // $sitemap .= '<priority>0.6</priority>';
+                // $sitemap .= '</url>';
+        
                 foreach ($blog_category->blogs as $blog) {
                     $sitemap .= '<url>';
-                    $sitemap .= '<loc>' . url('/blogs/' . $blog->slug) . '</loc>';
+                    $sitemap .= '<loc>' . route('blog.details', ['slug' => $blog->slug]) . '</loc>';
                     $sitemap .= '<lastmod>' . $blog->updated_at->toAtomString() . '</lastmod>';
                     $sitemap .= '<changefreq>monthly</changefreq>';
                     $sitemap .= '<priority>0.6</priority>';
@@ -135,7 +135,7 @@ class SitemapController extends Controller
                 foreach ($category['attributes'] as $attribute) {
                     foreach ($attribute['values'] as $value) {
                         $sitemap .= '<url>';
-                        $sitemap .= '<loc>' . url('/kitchen-catalog/' . $category['category-slug'] . '/' . $attribute['slug'] . '/' . $value['slug']) . '</loc>';
+                        $sitemap .= '<loc>' . url('/collections/' . $category['category-slug'] . '/' . $attribute['slug'] . '/' . $value['slug']) . '</loc>';
                         $sitemap .= '<lastmod>' . now()->toAtomString() . '</lastmod>';
                         $sitemap .= '<changefreq>monthly</changefreq>';
                         $sitemap .= '<priority>0.6</priority>';
@@ -148,13 +148,14 @@ class SitemapController extends Controller
         /**Other page */
         $pages = [
             ['url' => url('contact-us'), 'priority' => '0.6'],
+            ['url' => url('blog'), 'priority' => '0.6'],
             ['url' => url('about-us'), 'priority' => '0.6'],
-            ['url' => url('lp'), 'priority' => '0.5'],
-            ['url' => url('checkout'), 'priority' => '0.8'],
-            ['url' => url('order'), 'priority' => '0.8'],
-            ['url' => url('wishlist'), 'priority' => '0.8'],
-            ['url' => url('cart'), 'priority' => '0.8'],
-            ['url' => url('myaccount'), 'priority' => '0.9']
+            ['url' => url('customer-care'), 'priority' => '0.5'],
+            // ['url' => url('checkout'), 'priority' => '0.8'],
+            // ['url' => url('order'), 'priority' => '0.8'],
+            // ['url' => url('wishlist'), 'priority' => '0.8'],
+            // ['url' => url('cart'), 'priority' => '0.8'],
+            // ['url' => url('myaccount'), 'priority' => '0.9']
         ];
 
         foreach ($pages as $page) {

@@ -6,7 +6,7 @@ $meta_title = ucwords(strtolower($data['product_details']->title));
 }
 
 if ($data['product_details']->meta_description) {
-$meta_description = $data['product_details']->meta_description;
+    $meta_description = $data['product_details']->meta_description;
 } else {
 $meta_description = 'Himgiri Coolers';
 }
@@ -295,7 +295,7 @@ $meta_description = 'Himgiri Coolers';
 </section>
 <!-- /Product Description -->
 <!-- People Also Bought -->
-@if (!empty($data['related_products']) && $data['related_products']->isNotEmpty())
+@if(!empty($data['related_products']) && $data['related_products']->isNotEmpty())
 @php
     $bgColors = ['#f5f5f5', '#fff3d9', '#f4e7fb', '#f4dcdc'];
     $defaultImage = asset('frontend/assets/himgiri-img/logo/1.png');
@@ -388,6 +388,19 @@ $meta_description = 'Himgiri Coolers';
     </section>
 @endif
 <!-- People Also Bought -->
+@if(isset($data['product_details']->category))
+    @switch($data['product_details']->category->title)
+        @case('Air Coolers')
+            <div class="footer-icon-two">
+                @include('frontend.layouts.coolers-icon')
+            </div>
+            @break
+        @case('Almirah')
+            @include('frontend.layouts.almirah-icon')
+            @break
+        @default
+    @endswitch
+@endif
 @endsection
 @push('scripts')
 <script src="{{asset('frontend/assets/js/photoswipe-lightbox.umd.min.js')}}"></script>

@@ -62,7 +62,7 @@ class FrontendController extends Controller
                 'category:id,title,slug'
             ])
             ->get();
-        //return response()->json($data['modelValuesWithCategory']);
+        //return response()->json(count($data['modelValuesWithCategory']));
         DB::disconnect();
         return view('frontend.index', compact('data'));
     }

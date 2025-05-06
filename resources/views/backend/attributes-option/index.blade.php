@@ -65,7 +65,7 @@
                                 <button class="btn btn-sm btn-warning mergeAttributesValue" data-url="{{ route('merge-attributes-value') }}" data-size="lg" data-attriid="{{ $attributes->id }}" data-attrivalid="{{ $value->id }}"  data-title="Merge this ({{ $value->name }}) Attribute Value" data-bs-toggle="tooltip" title="Merge this Attribute Value">
                                     <i class="ti ti-arrow-merge"></i>
                                 </button>
-                                <button class="btn btn-sm btn-info editAttValue" data-url="{{ route('attributes-value.edit', $value->id) }}" data-size="md"   data-attrivid="{{$value->id}}" data-title="Edit Attribute Option" data-bs-toggle="tooltip" title="Edit Attribute Option">
+                                <button class="btn btn-sm btn-info editAttValue" data-url="{{ route('attributes-value.edit', $value->id) }}" data-size="md"   data-attrivid="{{$value->id}}" data-attributeid="{{ $attributes->id }}"  data-title="Edit Attribute Option" data-bs-toggle="tooltip" title="Edit Attribute Option">
                                 <i class="ti ti-pencil"></i>
                                 </button>
                                 <form method="POST" action="{{ route('attributes-value.delete', $value->id) }}" accept-charset="UTF-8" class="d-inline">

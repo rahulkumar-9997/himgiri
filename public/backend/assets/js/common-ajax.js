@@ -430,7 +430,7 @@ $(document).ready(function () {
     /**Attributes Value*/
         $(document).on('click', '.editAttValue', function () {
             var attributes_value_id = $(this).data('attrivid');
-            
+            var attributes_id = $(this).data('attributeid');
             var title = $(this).data('title');
             var size = ($(this).data('size') == '') ? 'md' : $(this).data('size');
             var url = $(this).data('url');
@@ -439,6 +439,7 @@ $(document).ready(function () {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 size: size,
                 url: url,
+                attributes_id:attributes_id,
                 attributes_value_id: attributes_value_id,
             };
             $("#commanModel .modal-title").html(title);

@@ -185,12 +185,14 @@ class AttributeController extends Controller
         $url = $request->input('url'); 
         $category_list = Category::orderBy('id', 'DESC')->get();
         $attributes_value_id = $request->input('attributes_value_id'); 
+        $attributes_id = $request->input('attributes_id'); 
         $attributes_value_row = Attribute_values::find($attributes_value_id);
         $mapped_attributes_value_category_ids = $attributes_value_row->map_attributes_value_to_categories->pluck('id')->toArray();
         $form = '
         <div class="modal-body">
             <form method="POST" action="' . route('attributes-value.update', $attributes_value_row->id) . '" accept-charset="UTF-8" enctype="multipart/form-data" id="uploadForm">
                 ' . csrf_field() . '
+                <input type="hidden" value="'.$attributes_id.'" name="attribute_id">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="mb-3">
@@ -225,23 +227,38 @@ class AttributeController extends Controller
         ]);
     }
 
-    public function updateAttributesValue(Request $request, $id){
+    public function updateAttributesValue(Request $request, $id)
+    {
         $request->validate([
-            'name' => 'required|string|max:255|unique:attributes,title,' . $id,
+            'name' => 'required|string|max:255',
+            'attribute_id' => 'required|exists:attributes,id',
         ]);
-        $attributes_value_row = Attribute_values::find($id);
-        if(!$attributes_value_row) {
-            return redirect()->back()->with('error', 'Attribute value not found.');
-        }
-        $input['name'] = $request->input('name');
-        $attributes_value_row_update = $attributes_value_row->update($input);
-        if($attributes_value_row_update){
-           // Sync selected categories with the attribute value
+        DB::beginTransaction();
+        try {
+            $attributes_value_row = Attribute_values::findOrFail($id);
+            $attributes_value_row->update([
+                'name' => $request->input('name')
+            ]);
             $selectedCategories = $request->input('mapped_attributes_value_to_category', []);
-            $attributes_value_row->map_attributes_value_to_categories()->sync($selectedCategories);
-            return redirect()->back()->with('success','Attributes value updated successfully');
-        }else{
-            return redirect()->back()->with('error','Somthings went wrong please try again !.');
+                $attributes_value_row->map_attributes_value_to_categories()->syncWithPivotValues(
+                $selectedCategories,
+                ['attributes_id' => $request->input('attribute_id')]
+            );
+            DB::commit();
+            return redirect()->back()->with('success', 'Attributes value updated successfully');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Attribute value not found.');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            Log::error('Attribute value update failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Database error occurred.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Attribute value update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong. Please try again.');
         }
     }
 

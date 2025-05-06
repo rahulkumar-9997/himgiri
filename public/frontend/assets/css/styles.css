@@ -21302,3 +21302,11 @@ ul.custom-list li::before,
     height: 120px;
   }
 }
+.footer-icon-two .flat-spacing-18{
+    padding-top: 5px;
+    padding-bottom: 20px;
+}
+.coolers-icon-section-three .flat-spacing-18{
+    padding-top: 30px;
+    padding-bottom: 30px;
+}

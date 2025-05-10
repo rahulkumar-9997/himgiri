@@ -172,6 +172,207 @@ class FrontendController extends Controller
 
     public function customerCareDataStore(Request $request)
     {
+        set_time_limit(120);
+        $validator = Validator::make($request->all(), [
+            'category' => 'required|integer|exists:category,id',
+            'model' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'problem_type' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone_number' => 'required|string|size:10',
+            'product_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:6144',
+            'message' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+        DB::beginTransaction();
+        try {
+            $category = Category::findOrFail($request->category);
+            $ticketId = strtoupper('TKT-' . Str::random(8));
+            $imagePath = null;
+            $pdfPath = null;
+
+            if ($request->hasFile('product_image')) {
+                $categoryName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($category->title));
+                $modelName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($request->model));
+                $image = $request->file('product_image');
+
+                $baseFilename = $categoryName . '-' . $modelName . '-' . Str::random(5);
+                $imageFilename = $baseFilename . '.jpg';
+
+                $directory = public_path('uploads/customer-care');
+                $directory_pdf = public_path('uploads/customer-care/pdf');
+                if (!File::exists($directory)) {
+                    File::makeDirectory($directory, 0755, true);
+                }
+                if (!File::exists($directory_pdf)) {
+                    File::makeDirectory($directory_pdf, 0755, true);
+                }
+                $imageInstance = Image::make($image)->encode('jpg', 75);
+                $imagePath = 'uploads/customer-care/' . $imageFilename;
+                $imageInstance->save(public_path($imagePath));
+                $careRequest = CustomerCareRequest::create([
+                    'ticket_id' => $ticketId,
+                    'category_name' => $category->title,
+                    'model_name' => $request->model,
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone_number' => $request->phone_number,
+                    'product_image' => $imageFilename,
+                    'message' => $request->message,
+                    'problem_type' => $request->problem_type,
+                ]);
+                $pdf = Pdf::loadView('frontend.emails.customer_care_pdf', ['careRequest' => $careRequest]);
+                $pdfFilename = $baseFilename . '.pdf';
+                $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFilename);
+                $pdf->save($pdfPath);
+
+                /*Send email*/
+                Mail::send('frontend.emails.customer_care_ticket', ['careRequest' => $careRequest], function ($message) use ($careRequest, $pdfPath) {
+                    $message->to('info@himgiricooler.com')
+                        ->subject('New Customer Care Ticket: ' . $careRequest->ticket_id)
+                        ->attach($pdfPath, [
+                            'as' => 'CustomerCareTicket.pdf',
+                            'mime' => 'application/pdf',
+                        ]);
+                });
+
+                /*Send WhatsApp notifications*/
+                $whatsAppSuccess = true;
+                try {
+                    $this->sendWhatsAppNotificationToCustomer($careRequest);
+                    $this->sendWhatsAppNotificationToAdmin($careRequest, $pdfFilename);
+                } catch (\Exception $e) {
+                    $whatsAppSuccess = false;
+                    Log::error('WhatsApp notification failed: ' . $e->getMessage());
+                }
+                DB::commit();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Your request has been submitted successfully. Our team will contact you shortly. Your Ticket ID is ' . $ticketId . '.',
+                    'whatsapp_sent' => $whatsAppSuccess,
+                    'pdf_file_name' =>$pdfFilename,
+                    'pdf_url' =>url('uploads/customer-care/pdf/' . $pdfFilename),
+                    'no_full_url' =>'uploads/customer-care/pdf/' . $pdfFilename,
+                ]);
+            }
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product image is required.',
+            ], 400);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if (isset($imagePath) && File::exists(public_path($imagePath))) {
+                File::delete(public_path($imagePath));
+            }
+            if (isset($pdfPath) && File::exists($pdfPath)) {
+                File::delete($pdfPath);
+            }
+            Log::error('Customer Care Request Failed: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. Please try again later.',
+            ], 500);
+        }
+    }
+
+    private function sendWhatsAppNotificationToCustomer($careRequest)
+    {
+        $apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MGYzOGRkZmFjOTk4MGMwMWU2MzZjYSIsIm5hbWUiOiJIaW1naXJpIENvb2xlcnMiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjQyYmZhYWVlYjE4NzUwNzM4ZTdmZGY4IiwiYWN0aXZlUGxhbiI6IkZSRUVfRk9SRVZFUiIsImlhdCI6MTc0NTgyODA2MX0.cPQv-_Aeqd1Mh8cGFpZeE2yMQ8IrYXzZw1Sgna5hQSM';
+        $data = [
+            'apiKey' => $apiKey,
+            'campaignName' => 'Complain-Message-to-Customer',
+            'destination' => '91' . $careRequest->phone_number,
+            'userName' => 'Himgiri Coolers',
+            'templateParams' => [
+                $careRequest->name,
+                $careRequest->ticket_id,
+                $careRequest->category_name,
+                $careRequest->model_name,
+                $careRequest->problem_type,
+                $careRequest->email ?? 'Not provided',
+                $careRequest->phone_number,
+                $careRequest->message ?? 'Not provided'
+            ],
+            'source' => 'new-landing-page form',
+            'media' => [],
+            'buttons' => [],
+            'carouselCards' => [],
+            'location' => [],
+            'attributes' => [],
+            'paramsFallbackValue' => [
+                'FirstName' => $careRequest->name
+            ]
+        ];
+
+        $this->callAisensyApi($data);
+    }
+
+    private function sendWhatsAppNotificationToAdmin($careRequest, $pdfFilename)
+    {
+        $apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MGYzOGRkZmFjOTk4MGMwMWU2MzZjYSIsIm5hbWUiOiJIaW1naXJpIENvb2xlcnMiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjQyYmZhYWVlYjE4NzUwNzM4ZTdmZGY4IiwiYWN0aXZlUGxhbiI6IkZSRUVfRk9SRVZFUiIsImlhdCI6MTc0NTgyODA2MX0.cPQv-_Aeqd1Mh8cGFpZeE2yMQ8IrYXzZw1Sgna5hQSM';
+        $adminPhoneNumber = '919839438073';
+        $pdfUrl = asset('uploads/customer-care/pdf/' . $pdfFilename);
+        $data = [
+            'apiKey' => $apiKey,
+            'campaignName' => 'Complain-Message-to-Admin',
+            'destination' => $adminPhoneNumber,
+            'userName' => 'Himgiri Coolers',
+            'templateParams' => [
+                $careRequest->ticket_id,
+                $careRequest->category_name,
+                $careRequest->model_name,
+                $careRequest->problem_type,
+                $careRequest->name,
+                $careRequest->email ?? 'Not provided',
+                $careRequest->phone_number,               
+                $careRequest->message ?? 'Not provided',
+                'public/uploads/customer-care/pdf/' . $pdfFilename
+            ],
+            'source' => 'new-landing-page form',
+            'media' => [
+                'url' => $pdfUrl,
+                'filename' => $pdfFilename,
+            ],
+            'buttons' => [],
+            'carouselCards' => [],
+            'location' => [],
+            'attributes' => [],
+            'paramsFallbackValue' => [
+                'FirstName' => $careRequest->name
+            ]
+        ];
+        $this->callAisensyApi($data);
+    }
+
+    private function callAisensyApi($data)
+    {
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->post('https://backend.aisensy.com/campaign/t1/api/v2', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'body' => json_encode($data)
+            ]);
+
+            Log::info('Aisensy API Response: ' . $response->getBody());
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Aisensy API Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function customerCareDataStore_old_remove_it(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'category' => 'required|integer|exists:category,id',
             'model' => 'required|string|max:255',
@@ -252,7 +453,6 @@ class FrontendController extends Controller
             ], 400);
         } catch (\Exception $e) {
             Log::error('Customer Care Request Failed: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong. Please try again later.',

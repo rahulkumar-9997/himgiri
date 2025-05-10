@@ -13,17 +13,30 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 2px solid #dd2b1c;
             padding-bottom: 20px;
+            position: relative;
+        }
+        .logo-container {
+            margin-bottom: 15px;
+        }
+        .logo-container img {
+            max-height: 80px;
+            max-width: 200px;
         }
         .header h1 {
             color: #dd2b1c;
-            margin: 0;
+            margin: 10px 0 5px;
             font-size: 24px;
         }
         .header .subtitle {
             color: #7f8c8d;
             font-size: 14px;
+        }
+        .border-bottom {
+            border-bottom: 2px solid #dd2b1c;
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 20px;
         }
         table {
             width: 100%;
@@ -70,8 +83,14 @@
 </head>
 <body>
     <div class="header">
+        <!-- Logo Area -->
+        <div class="logo-container">
+            <img src="https://www.himgiricooler.com/public/frontend/assets/himgiri-img/logo/1.png" alt="Company Logo">
+        </div>
+        
         <h1>Customer Care Request</h1>
         <div class="subtitle">Ticket ID: {{ $careRequest->ticket_id }}</div>
+        <div class="border-bottom"></div>
     </div>
 
     <table>
@@ -121,9 +140,6 @@
         </tr>
     </table>
 
-    <div class="footer">
-        This ticket was generated on {{ now()->format('F j, Y \a\t H:i') }}<br>
-        For any questions, please contact our support team
-    </div>
+    
 </body>
 </html>

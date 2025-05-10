@@ -233,6 +233,7 @@ class FrontendController extends Controller
                 $pdf->save($pdfPath);
 
                 /*Send email*/
+                //info@himgiricooler.com
                 Mail::send('frontend.emails.customer_care_ticket', ['careRequest' => $careRequest], function ($message) use ($careRequest, $pdfPath) {
                     $message->to('info@himgiricooler.com')
                         ->subject('New Customer Care Ticket: ' . $careRequest->ticket_id)

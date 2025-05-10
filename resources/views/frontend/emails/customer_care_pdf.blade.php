@@ -83,9 +83,13 @@
 </head>
 <body>
     <div class="header">
-        <!-- Logo Area -->
         <div class="logo-container">
-            <img src="https://www.himgiricooler.com/public/frontend/assets/himgiri-img/logo/1.png" alt="Company Logo">
+            @if(file_exists(public_path('frontend/assets/himgiri-img/logo/1.png')))
+                <img src="{{ public_path('frontend/assets/himgiri-img/logo/1.png') }}" alt="Company Logo">
+            @else
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('path/to/local/logo.png'))) }}" alt="Company Logo">
+                <h2>Himgiri Coolers</h2>
+            @endif
         </div>
         
         <h1>Customer Care Request</h1>

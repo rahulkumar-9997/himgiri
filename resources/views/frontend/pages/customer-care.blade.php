@@ -45,6 +45,23 @@
                                         </div>
                                         @endif
                                     </fieldset>
+                                    <fieldset>
+                                        <label>In Warranty *</label>
+                                        <div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" value="Yes" id="in_warranty" name="in_warranty" checked="">
+                                                <label class="form-check-label" for="in_warranty">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" value="No" id="in_warranty" name="in_warranty">
+                                                <label class="form-check-label" for="in_warranty">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </fieldset>
                                 </div>
                                 <div class="cols">
                                     <fieldset>
@@ -85,8 +102,12 @@
                                         <input id="phone_number" class="radius-8 form-control" type="text" name="phone_number" maxlength="10">
                                     </fieldset>
                                     <fieldset>
-                                        <label for="product_image">Product Image (File) *</label>
+                                        <label for="product_image">Product Image *</label>
                                         <input id="product_image" class="radius-8 form-control" type="file" name="product_image">
+                                    </fieldset>
+                                    <fieldset>
+                                        <label for="invoice_image">Upload Invoice Image (Optional)</label>
+                                        <input id="invoice_image" class="radius-8 form-control" type="file" name="invoice_image">
                                     </fieldset>
                                 </div>
                                 <div class="cols">
@@ -130,6 +151,7 @@
                                 $('#model').append('<option value="' + value.name + '">' + value.name + '</option>');
                             });
                         }
+                        $('#model').append('<option value="Any Other Model"  style="font-size: 16px;">Any Other Model</option>');
                     }
                 });
             } else {

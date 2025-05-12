@@ -152,7 +152,10 @@ class FrontendController extends Controller
 
     public function customerCare()
     {
-        $category = Category::select('id', 'title', 'slug')->get();
+        $category = Category::select('id', 'title', 'slug')
+        ->where('title', 'Air Coolers')
+        ->orderBy('title', 'asc')
+        ->get();
         return view('frontend.pages.customer-care', compact('category'));
     }
 
@@ -165,7 +168,8 @@ class FrontendController extends Controller
             ->with('attributeValue')
             ->get()
             ->pluck('attributeValue')
-            ->filter();
+            ->filter()
+            ->sortBy('name');
 
         return response()->json($mappedValues->values());
     }
@@ -178,9 +182,11 @@ class FrontendController extends Controller
             'model' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'problem_type' => 'required|string|max:255',
+            'in_warranty' => 'required|in:Yes,No',
             'email' => 'nullable|email|max:255',
             'phone_number' => 'required|string|size:10',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:6144',
+            'invoice_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:6144',
             'message' => 'nullable|string',
         ]);
 
@@ -190,88 +196,97 @@ class FrontendController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+
         DB::beginTransaction();
         try {
             $category = Category::findOrFail($request->category);
             $ticketId = strtoupper('TKT-' . Str::random(8));
-            $imagePath = null;
-            $pdfPath = null;
-
-            if ($request->hasFile('product_image')) {
-                $categoryName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($category->title));
-                $modelName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($request->model));
-                $image = $request->file('product_image');
-
-                $baseFilename = $categoryName . '-' . $modelName . '-' . Str::random(5);
-                $imageFilename = $baseFilename . '.jpg';
-
-                $directory = public_path('uploads/customer-care');
-                $directory_pdf = public_path('uploads/customer-care/pdf');
-                if (!File::exists($directory)) {
-                    File::makeDirectory($directory, 0755, true);
-                }
-                if (!File::exists($directory_pdf)) {
-                    File::makeDirectory($directory_pdf, 0755, true);
-                }
-                $imageInstance = Image::make($image)->encode('jpg', 75);
-                $imagePath = 'uploads/customer-care/' . $imageFilename;
-                $imageInstance->save(public_path($imagePath));
-                $careRequest = CustomerCareRequest::create([
-                    'ticket_id' => $ticketId,
-                    'category_name' => $category->title,
-                    'model_name' => $request->model,
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'phone_number' => $request->phone_number,
-                    'product_image' => $imageFilename,
-                    'message' => $request->message,
-                    'problem_type' => $request->problem_type,
-                ]);
-                $pdf = Pdf::loadView('frontend.emails.customer_care_pdf', ['careRequest' => $careRequest]);
-                $pdfFilename = $baseFilename . '.pdf';
-                $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFilename);
-                $pdf->save($pdfPath);
-
-                /*Send email*/
-                //info@himgiricooler.com
-                Mail::send('frontend.emails.customer_care_ticket', ['careRequest' => $careRequest], function ($message) use ($careRequest, $pdfPath) {
-                    $message->to('info@himgiricooler.com')
-                        ->subject('New Customer Care Ticket: ' . $careRequest->ticket_id)
-                        ->attach($pdfPath, [
-                            'as' => 'CustomerCareTicket.pdf',
-                            'mime' => 'application/pdf',
-                        ]);
-                });
-
-                /*Send WhatsApp notifications*/
-                $whatsAppSuccess = true;
-                try {
-                    $this->sendWhatsAppNotificationToCustomer($careRequest);
-                    $this->sendWhatsAppNotificationToAdmin($careRequest, $pdfFilename);
-                } catch (\Exception $e) {
-                    $whatsAppSuccess = false;
-                    Log::error('WhatsApp notification failed: ' . $e->getMessage());
-                }
-                DB::commit();
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Your request has been submitted successfully. Our team will contact you shortly. Your Ticket ID is ' . $ticketId . '.',
-                    'whatsapp_sent' => $whatsAppSuccess,
-                    'pdf_file_name' =>$pdfFilename,
-                    'pdf_url' =>url('uploads/customer-care/pdf/' . $pdfFilename),
-                    'no_full_url' =>'uploads/customer-care/pdf/' . $pdfFilename,
-                ]);
+            $categoryName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($category->title));
+            $modelName = preg_replace('/[^A-Za-z0-9\-]/', '', strtolower($request->model));
+            $baseFilename = $categoryName . '-' . $modelName . '-' . Str::random(5);
+            $directory = public_path('uploads/customer-care');
+            $directory_invoice = public_path('uploads/customer-care/invoice');
+            $directory_pdf = public_path('uploads/customer-care/pdf');
+            
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
             }
-            DB::rollBack();
+            if (!File::exists($directory_invoice)) {
+                File::makeDirectory($directory_invoice, 0755, true);
+            }
+            if (!File::exists($directory_pdf)) {
+                File::makeDirectory($directory_pdf, 0755, true);
+            }
+            /*Product image */
+            $productImage = $request->file('product_image');
+            $imageFilename = $baseFilename . '.jpg';
+            $imagePath = 'uploads/customer-care/' . $imageFilename;
+            Image::make($productImage)->encode('jpg', 75)->save(public_path($imagePath));
+
+            /*Product invoice image if provided*/
+            $invoiceFilename = null;
+            if ($request->hasFile('invoice_image')) {
+                $invoiceImage = $request->file('invoice_image');
+                $invoiceFilename = 'invoice-' . $baseFilename . '.' . $invoiceImage->getClientOriginalExtension();
+                $invoicePath = 'uploads/customer-care/invoice/' . $invoiceFilename;
+                $invoiceImage->move($directory_invoice, $invoiceFilename);
+            }
+            $careRequest = CustomerCareRequest::create([
+                'ticket_id' => $ticketId,
+                'category_name' => $category->title,
+                'model_name' => $request->model,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'product_image' => $imageFilename,
+                'invoice_image' => $invoiceFilename,
+                'in_warranty' => $request->in_warranty,
+                'message' => $request->message,
+                'problem_type' => $request->problem_type,
+            ]);
+
+            /*Generate PDF*/
+            $pdf = Pdf::loadView('frontend.emails.customer_care_pdf', ['careRequest' => $careRequest]);
+            $pdfFilename = $baseFilename . '.pdf';
+            $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFilename);
+            $pdf->save($pdfPath);
+
+            /*Send email info@himgiricooler.com*/
+            Mail::send('frontend.emails.customer_care_ticket', ['careRequest' => $careRequest], function ($message) use ($careRequest, $pdfPath) {
+                $message->to('info@himgiricooler.com')
+                    ->subject('New Customer Care Ticket: ' . $careRequest->ticket_id)
+                    ->attach($pdfPath, [
+                        'as' => 'CustomerCareTicket.pdf',
+                        'mime' => 'application/pdf',
+                    ]);
+            });
+            /* Send WhatsApp notifications */
+            $whatsAppSuccess = true;
+            try {
+                $this->sendWhatsAppNotificationToCustomer($careRequest);
+                $this->sendWhatsAppNotificationToAdmin($careRequest, $pdfFilename);
+            } catch (\Exception $e) {
+                $whatsAppSuccess = false;
+                Log::error('WhatsApp notification failed: ' . $e->getMessage());
+            }
+
+            DB::commit();
             return response()->json([
-                'status' => 'error',
-                'message' => 'Product image is required.',
-            ], 400);
+                'status' => 'success',
+                'message' => 'Your request has been submitted successfully. Our team will contact you shortly. Your Ticket ID is ' . $ticketId . '.',
+                //'whatsapp_sent' => $whatsAppSuccess,
+                //'pdf_file_name' => $pdfFilename,
+                //'pdf_url' => url('uploads/customer-care/pdf/' . $pdfFilename),
+                //'no_full_url' => 'uploads/customer-care/pdf/' . $pdfFilename,
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             if (isset($imagePath) && File::exists(public_path($imagePath))) {
                 File::delete(public_path($imagePath));
+            }
+            if (isset($invoicePath) && File::exists(public_path($invoicePath))) {
+                File::delete(public_path($invoicePath));
             }
             if (isset($pdfPath) && File::exists($pdfPath)) {
                 File::delete($pdfPath);

@@ -48,6 +48,11 @@
                                         @if(!empty($customer_care_request_row->model_name))
                                         <p style="margin-bottom: 5px;"><strong>Model :</strong> {{ $customer_care_request_row->model_name }}</p>
                                         @endif
+                                        @if(!empty($customer_care_request_row->in_warranty === 'Yes'))
+                                            <p style="margin-bottom: 5px;"><strong>In Warranty :</strong> Yes</p>
+                                        @else
+                                            <p style="margin-bottom: 5px;"><strong>In Warranty :</strong> No</p>
+                                        @endif
                                        
                                     <p style="margin-bottom: 5px;"><strong>Problem Type :</strong> 
                                         @if(!empty($customer_care_request_row->problem_type))

@@ -314,20 +314,28 @@ class CustomerControllerBackend extends Controller
         return view('backend.manage-customer.customer-care-request.index', compact('data'));
     }
 
-    public function customerCareRequestDelete($id){
+    public function customerCareRequestDelete($id)
+    {
         try {
             $careRequest = CustomerCareRequest::findOrFail($id);
             $imagePath = public_path('uploads/customer-care/' . $careRequest->product_image);
-            $pdfFileName = str_replace('.jpg', '.pdf', $careRequest->product_image);
-            $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFileName);
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
             }
+            if ($careRequest->invoice_image) {
+                $invoicePath = public_path('uploads/customer-care/invoice/' . $careRequest->invoice_image);
+                if (File::exists($invoicePath)) {
+                    File::delete($invoicePath);
+                }
+            }
+            $pdfFileName = str_replace('.jpg', '.pdf', $careRequest->product_image);
+            $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFileName);
             if (File::exists($pdfPath)) {
                 File::delete($pdfPath);
             }
             $careRequest->delete();
             return redirect()->back()->with('success', 'Customer care request deleted successfully.');
+            
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete. Error: ' . $e->getMessage());
         }

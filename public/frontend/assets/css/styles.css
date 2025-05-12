@@ -403,7 +403,7 @@ input[type=tel],
 input[type=file],
 input[type=color] {
   font-family: "Poppins", sans-serif;
-  border: 1px solid var(--line);
+  border: 1px solid #1a1a1a;
   outline: 0;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -5200,7 +5200,7 @@ button.animate-btn::after,
 .tf-select select {
   width: 100%;
   padding: 9px 24px 9px 12px;
-  border: 1px solid var(--line);
+  border: 1px solid #1a1a1a5e;
   border-radius: 999px;
   -webkit-appearance: none;
   appearance: none;
@@ -5234,7 +5234,7 @@ button.animate-btn::after,
   border-radius: 6px;
   font-size: 14px;
   line-height: 20px;
-  color: var(--text-3);
+  color: #1a1a1a;
   opacity: 0.8;
   height: 50px;
 }
@@ -5442,12 +5442,12 @@ button.animate-btn::after,
 }
 .form-default fieldset input {
   border-radius: 45px;
-  border-color: var(--line);
+  border-color: #1a1a1a5e;
   color: var(--dark);
 }
 .form-default fieldset textarea {
   border-radius: 16px;
-  border-color: var(--line);
+  border-color: #1a1a1a5e;
   height: unset;
 }
 .form-default fieldset textarea:hover {

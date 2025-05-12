@@ -16,6 +16,8 @@ class CustomerCareRequest extends Model
         'email',
         'phone_number',
         'product_image',
+        'invoice_image',
+        'in_warranty',
         'message',
         'problem_type'
     ];

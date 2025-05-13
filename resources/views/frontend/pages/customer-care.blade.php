@@ -95,12 +95,32 @@
                                         <label for="email">Your email</label>
                                         <input id="email" class="radius-8 form-control" type="email" name="email">
                                     </fieldset>
-                                </div>
-                                <div class="cols">
                                     <fieldset>
                                         <label for="phone_number">Phone No.*</label>
                                         <input id="phone_number" class="radius-8 form-control" type="text" name="phone_number" maxlength="10">
                                     </fieldset>
+                                </div>
+                                <div class="cols">
+                                    <fieldset>
+                                        <label for="model">Select Your City Name *</label>
+                                        <div class="tf-select select-square">
+                                            <select name="city_name" id="city_name" class="form-control">
+                                                <option value="">Select City Name</option>
+                                                <option value="Ayodhya">Ayodhya</option>
+                                                <option value="Basti">Basti</option>
+                                                <option value="Gorakhpur">Gorakhpur</option>
+                                                <option value="Varanasi">Varanasi</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <label for="problem_type">Address *</label>
+                                        <textarea id="address" class="radius-8 form-control" cols="20" name="address" rows="3"></textarea>
+                                    </fieldset>
+                                </div>
+                                <div class="cols">
+                                    
                                     <fieldset>
                                         <label for="product_image">Product Image *</label>
                                         <input id="product_image" class="radius-8 form-control" type="file" name="product_image">
@@ -110,6 +130,7 @@
                                         <input id="invoice_image" class="radius-8 form-control" type="file" name="invoice_image">
                                     </fieldset>
                                 </div>
+                                
                                 <div class="cols">
                                     <fieldset class="textarea">
                                         <label for="mess">Message</label>

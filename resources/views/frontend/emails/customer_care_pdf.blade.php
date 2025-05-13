@@ -56,7 +56,9 @@
             <td style="padding: 3px 5px; border: 1px solid #ddd; vertical-align: top;"><strong>Contact Information</strong></td>
             <td style="padding: 3px 5px; border: 1px solid #ddd; vertical-align: top;">
                 Email: {{ $careRequest->email ?? 'Not provided' }}<br>
-                Phone: {{ $careRequest->phone_number }}
+                Phone: {{ $careRequest->phone_number }}<br>
+                City: {{ $careRequest->city_name }}<br>
+                Address: {{ $careRequest->address }}
             </td>
         </tr>
         <tr>

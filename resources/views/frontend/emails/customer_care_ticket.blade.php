@@ -46,6 +46,14 @@
             <td style="padding: 3px 5px; border: 1px solid #ddd; font-weight: bold;">Phone Number</td>
             <td style="padding: 3px 5px; border: 1px solid #ddd;">{{ $careRequest->phone_number }}</td>
         </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 3px 5px; border: 1px solid #ddd; font-weight: bold;">City</td>
+            <td style="padding: 3px 5px; border: 1px solid #ddd;">{{ $careRequest->city_name }}</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 3px 5px; border: 1px solid #ddd; font-weight: bold;">Address</td>
+            <td style="padding: 3px 5px; border: 1px solid #ddd;">{{ $careRequest->address }}</td>
+        </tr>
         <tr>
             <td style="padding: 3px 5px; border: 1px solid #ddd; font-weight: bold;">Message</td>
             <td style="padding: 3px 5px; border: 1px solid #ddd;">{{ $careRequest->message ?? '-' }}</td>

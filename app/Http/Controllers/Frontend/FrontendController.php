@@ -30,6 +30,8 @@ use App\Models\Counter;
 use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
+use Torann\GeoIP\Location;
+
 class FrontendController extends Controller
 {
     public function home()
@@ -176,6 +178,7 @@ class FrontendController extends Controller
 
     public function customerCareDataStore(Request $request)
     {
+        $servicedCities = ['Ayodhya', 'Basti', 'Gorakhpur', 'Varanasi'];
         set_time_limit(120);
         $validator = Validator::make($request->all(), [
             'category' => 'required|integer|exists:category,id',
@@ -185,18 +188,20 @@ class FrontendController extends Controller
             'in_warranty' => 'required|in:Yes,No',
             'email' => 'nullable|email|max:255',
             'phone_number' => 'required|string|size:10',
+            'city_name' => 'required|string|max:255',
+            'address' => 'required|string',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:6144',
             'invoice_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:6144',
             'message' => 'nullable|string',
         ]);
-
+        
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors(),
             ], 422);
         }
-
+        $isOtherCity = ($request->city_name === 'Other' || !in_array($request->city_name, $servicedCities));
         DB::beginTransaction();
         try {
             $category = Category::findOrFail($request->category);
@@ -238,6 +243,8 @@ class FrontendController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
+                'city_name' => $request->city_name,
+                'address' => $request->address,
                 'product_image' => $imageFilename,
                 'invoice_image' => $invoiceFilename,
                 'in_warranty' => $request->in_warranty,
@@ -249,6 +256,7 @@ class FrontendController extends Controller
             $pdf = Pdf::loadView('frontend.emails.customer_care_pdf', ['careRequest' => $careRequest]);
             $pdfFilename = $baseFilename . '.pdf';
             $pdfPath = public_path('uploads/customer-care/pdf/' . $pdfFilename);
+            $invoicePath = public_path('uploads/customer-care/invoice/' . $invoiceFilename);
             $pdf->save($pdfPath);
 
             /*Send email info@himgiricooler.com*/
@@ -273,7 +281,9 @@ class FrontendController extends Controller
             DB::commit();
             return response()->json([
                 'status' => 'success',
-                'message' => 'Your request has been submitted successfully. Our team will contact you shortly. Your Ticket ID is ' . $ticketId . '.',
+                'message' => $isOtherCity 
+                ? 'Currently we are not providing services in locations other than above. Please contact your Dealer for more help.' 
+                : 'Your request has been submitted successfully. Our team will contact you shortly. Your Ticket ID is ' . $ticketId . '.',
                 //'whatsapp_sent' => $whatsAppSuccess,
                 //'pdf_file_name' => $pdfFilename,
                 //'pdf_url' => url('uploads/customer-care/pdf/' . $pdfFilename),
@@ -304,17 +314,19 @@ class FrontendController extends Controller
         $apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MGYzOGRkZmFjOTk4MGMwMWU2MzZjYSIsIm5hbWUiOiJIaW1naXJpIENvb2xlcnMiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjQyYmZhYWVlYjE4NzUwNzM4ZTdmZGY4IiwiYWN0aXZlUGxhbiI6IkZSRUVfRk9SRVZFUiIsImlhdCI6MTc0NTgyODA2MX0.cPQv-_Aeqd1Mh8cGFpZeE2yMQ8IrYXzZw1Sgna5hQSM';
         $data = [
             'apiKey' => $apiKey,
-            'campaignName' => 'Complain-Message-to-Customer',
+            'campaignName' => 'Complain-Message-to-Customer-New',
             'destination' => '91' . $careRequest->phone_number,
             'userName' => 'Himgiri Coolers',
             'templateParams' => [
                 $careRequest->name,
                 $careRequest->ticket_id,
+                $careRequest->city_name,
                 $careRequest->category_name,
                 $careRequest->model_name,
                 $careRequest->problem_type,
                 $careRequest->email ?? 'Not provided',
                 $careRequest->phone_number,
+                $careRequest->address,
                 $careRequest->message ?? 'Not provided'
             ],
             'source' => 'new-landing-page form',
@@ -336,9 +348,10 @@ class FrontendController extends Controller
         $apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MGYzOGRkZmFjOTk4MGMwMWU2MzZjYSIsIm5hbWUiOiJIaW1naXJpIENvb2xlcnMiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjQyYmZhYWVlYjE4NzUwNzM4ZTdmZGY4IiwiYWN0aXZlUGxhbiI6IkZSRUVfRk9SRVZFUiIsImlhdCI6MTc0NTgyODA2MX0.cPQv-_Aeqd1Mh8cGFpZeE2yMQ8IrYXzZw1Sgna5hQSM';
         $adminPhoneNumber = '919839438073';
         $pdfUrl = asset('uploads/customer-care/pdf/' . $pdfFilename);
+        $invoiceUrl = asset('uploads/customer-care/invoice/' . $careRequest->invoice_image);
         $data = [
             'apiKey' => $apiKey,
-            'campaignName' => 'Complain-Message-to-Admin',
+            'campaignName' => 'Complain-Message-to-Admin-New',
             'destination' => $adminPhoneNumber,
             'userName' => 'Himgiri Coolers',
             'templateParams' => [
@@ -350,6 +363,9 @@ class FrontendController extends Controller
                 $careRequest->email ?? 'Not provided',
                 $careRequest->phone_number,               
                 $careRequest->message ?? 'Not provided',
+                $careRequest->city_name,
+                $careRequest->address,
+                $invoiceUrl,
                 'public/uploads/customer-care/pdf/' . $pdfFilename
             ],
             'source' => 'new-landing-page form',

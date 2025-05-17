@@ -155,9 +155,9 @@ class FrontendController extends Controller
     public function customerCare()
     {
         $category = Category::select('id', 'title', 'slug')
-        ->where('title', 'Air Coolers')
-        ->orderBy('title', 'asc')
-        ->get();
+            ->where('title', 'Air Coolers')
+            ->orderBy('title', 'asc')
+            ->get();
         return view('frontend.pages.customer-care', compact('category'));
     }
 
@@ -194,7 +194,7 @@ class FrontendController extends Controller
             'invoice_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:6144',
             'message' => 'nullable|string',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
@@ -212,7 +212,7 @@ class FrontendController extends Controller
             $directory = public_path('uploads/customer-care');
             $directory_invoice = public_path('uploads/customer-care/invoice');
             $directory_pdf = public_path('uploads/customer-care/pdf');
-            
+
             if (!File::exists($directory)) {
                 File::makeDirectory($directory, 0755, true);
             }
@@ -281,15 +281,14 @@ class FrontendController extends Controller
             DB::commit();
             return response()->json([
                 'status' => 'success',
-                'message' => $isOtherCity 
-                ? 'Currently we are not providing services in locations other than above. Please contact your Dealer for more help.' 
-                : 'Your request has been submitted successfully. Our team will contact you shortly. Your Ticket ID is ' . $ticketId . '.',
+                'message' => $isOtherCity
+                    ? 'Currently we are not providing services in locations other than above. Please contact your Dealer for more help.'
+                    : 'Your request has been submitted successfully. Our team will contact you shortly. Your Ticket ID is ' . $ticketId . '.',
                 //'whatsapp_sent' => $whatsAppSuccess,
                 //'pdf_file_name' => $pdfFilename,
                 //'pdf_url' => url('uploads/customer-care/pdf/' . $pdfFilename),
                 //'no_full_url' => 'uploads/customer-care/pdf/' . $pdfFilename,
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             if (isset($imagePath) && File::exists(public_path($imagePath))) {
@@ -346,42 +345,46 @@ class FrontendController extends Controller
     private function sendWhatsAppNotificationToAdmin($careRequest, $pdfFilename)
     {
         $apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MGYzOGRkZmFjOTk4MGMwMWU2MzZjYSIsIm5hbWUiOiJIaW1naXJpIENvb2xlcnMiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjQyYmZhYWVlYjE4NzUwNzM4ZTdmZGY4IiwiYWN0aXZlUGxhbiI6IkZSRUVfRk9SRVZFUiIsImlhdCI6MTc0NTgyODA2MX0.cPQv-_Aeqd1Mh8cGFpZeE2yMQ8IrYXzZw1Sgna5hQSM';
-        $adminPhoneNumber = '919839438073';
+        $adminPhoneNumber = ['919839438073', '9415219018'];
         $pdfUrl = asset('uploads/customer-care/pdf/' . $pdfFilename);
         $invoiceUrl = asset('uploads/customer-care/invoice/' . $careRequest->invoice_image);
-        $data = [
-            'apiKey' => $apiKey,
-            'campaignName' => 'Complain-Message-to-Admin-New',
-            'destination' => $adminPhoneNumber,
-            'userName' => 'Himgiri Coolers',
-            'templateParams' => [
-                $careRequest->ticket_id,
-                $careRequest->category_name,
-                $careRequest->model_name,
-                $careRequest->problem_type,
-                $careRequest->name,
-                $careRequest->email ?? 'Not provided',
-                $careRequest->phone_number,               
-                $careRequest->message ?? 'Not provided',
-                $careRequest->city_name,
-                $careRequest->address,
-                $invoiceUrl,
-                'public/uploads/customer-care/pdf/' . $pdfFilename
-            ],
-            'source' => 'new-landing-page form',
-            'media' => [
-                'url' => $pdfUrl,
-                'filename' => $pdfFilename,
-            ],
-            'buttons' => [],
-            'carouselCards' => [],
-            'location' => [],
-            'attributes' => [],
-            'paramsFallbackValue' => [
-                'FirstName' => $careRequest->name
-            ]
-        ];
-        $this->callAisensyApi($data);
+        $adminPhoneNumbers = ['919839438073', '9415219018'];
+        foreach ($adminPhoneNumbers as $number) {
+            $data = [
+                'apiKey' => $apiKey,
+                'campaignName' => 'Complain-Message-to-Admin-New',
+                'destination' => $number,
+                'userName' => 'Himgiri Coolers',
+                'templateParams' => [
+                    $careRequest->ticket_id,
+                    $careRequest->category_name,
+                    $careRequest->model_name,
+                    $careRequest->problem_type,
+                    $careRequest->name,
+                    $careRequest->email ?? 'Not provided',
+                    $careRequest->phone_number,
+                    $careRequest->message ?? 'Not provided',
+                    $careRequest->city_name,
+                    $careRequest->address,
+                    $invoiceUrl,
+                    'public/uploads/customer-care/pdf/' . $pdfFilename
+                ],
+                'source' => 'new-landing-page form',
+                'media' => [
+                    'url' => $pdfUrl,
+                    'filename' => $pdfFilename,
+                ],
+                'buttons' => [],
+                'carouselCards' => [],
+                'location' => [],
+                'attributes' => [],
+                'paramsFallbackValue' => [
+                    'FirstName' => $careRequest->name
+                ]
+            ];
+
+            $this->callAisensyApi($data);
+        }
     }
 
     private function callAisensyApi($data)
@@ -845,10 +848,10 @@ class FrontendController extends Controller
             </div>
             <div class="modal-bottom newsletter">
                 <div class="product-enquiry-form">
-                    <form action="'.route('product-enquiry-model.submit').'" accept-charset="UTF-8" enctype="multipart/form-data" id="productEnquiryForm" class="form-default">
-                        '.csrf_field().'
-                        <input type="hidden" value="'.$product_title.'" name="product_name">
-                        <input type="hidden" value="'.$product_image_path.'" name="image_path">
+                    <form action="' . route('product-enquiry-model.submit') . '" accept-charset="UTF-8" enctype="multipart/form-data" id="productEnquiryForm" class="form-default">
+                        ' . csrf_field() . '
+                        <input type="hidden" value="' . $product_title . '" name="product_name">
+                        <input type="hidden" value="' . $product_image_path . '" name="image_path">
                         <div class="wrap">
                             <div class="cols">
                                 <fieldset>
@@ -920,9 +923,9 @@ class FrontendController extends Controller
             Mail::send('frontend.emails.product_enquiry', $data, function ($mail) use ($data, $attachment) {
                 $mail->to('rahulkumarmaurya464@gmail.com', 'Admin')
                     ->subject('Product Enquiry: ' . $data['product_name']);
-                
+
                 if ($attachment) {
-                    $mail->attach($attachment); 
+                    $mail->attach($attachment);
                 }
             });
 
@@ -930,7 +933,6 @@ class FrontendController extends Controller
                 'status' => 'success',
                 'message' => 'Enquiry submitted successfully. Our team will contact you shortly.',
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -938,6 +940,4 @@ class FrontendController extends Controller
             ], 500);
         }
     }
-
-
 }

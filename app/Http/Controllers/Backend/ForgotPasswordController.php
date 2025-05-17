@@ -31,11 +31,12 @@ class ForgotPasswordController extends Controller
             'token' => $token, 
             'created_at' => Carbon::now()
         ]);
+
         try {
             $data = [
                 'token' => $token,
             ];
-            Mail::to($request->email)->queue(new AdminResetPasswordMail($data));
+            Mail::to($request->email)->send(new AdminResetPasswordMail($data));
             Log::info('Email sent successfully to '.$request->email.'');
         } 
         catch(Exception $e){

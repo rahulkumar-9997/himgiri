@@ -72,7 +72,7 @@
                                     </div>
                                     
                                     <div class="col-lg-12 mb-3 text-center d-grid">
-                                        <button class="btn btn-soft-primary" type="submit">Sign In</button>
+                                        <button class="btn btn-soft-primary" type="submit">Submit</button>
                                     </div>
                                 </form>
                                 <!--<p class="mt-3 fw-semibold no-span">OR sign with</p>
